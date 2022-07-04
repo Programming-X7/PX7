@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p style="--n:1"></p>
+<p style="--n:2"></p>
+<b style="--n:3"></b>
+<b style="--n:4"></b>
+<b style="--n:5"></b>
+<b style="--n:6"></b>
+<b style="--n:0"></b>
+
+<style type="text/css">
+*{
+position: fixed;
+background: #D25B70;
+margin-top:80px;
+}
+b{
+width:100px;
+height:10px;
+border-radius: 15px;
+background: red;
+top:195px;
+left:80px;
+transform-origin: 120px;
+transform: rotate(calc(30deg*var(--n)));
+}
+</style>
+</body>
+</html>
