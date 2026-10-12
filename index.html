@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم قصص الخيال العلمي - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #ffffff; }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8 border-b border-gray-800 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-cyan-400">🚀 لوحة تحكم القصص (Admin Hub)</h1>
+                <p class="text-xs text-gray-400">إدارة منصة قصص الخيال العلمي والمزامنة مع تطبيق الهاتف</p>
+            </div>
+            <div id="connectionStatus" class="text-xs bg-purple-900/60 text-cyan-300 px-3 py-1.5 rounded-full border border-purple-500 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span>متصل بـ Firebase Live</span>
+            </div>
+        </header>
+
+        <!-- Firebase Config Card -->
+        <div class="bg-gray-900 p-5 rounded-2xl border border-gray-800 mb-8 shadow-lg">
+            <h2 class="text-sm font-bold text-cyan-300 mb-2">تكوين الاتصال (Firebase Config)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs mb-3">
+                <input type="text" id="cfgApiKey" placeholder="API Key..." class="bg-gray-800 border border-gray-700 p-2.5 rounded-lg text-white focus:outline-none focus:border-cyan-400">
+                <input type="text" id="cfgProjectId" placeholder="Project ID..." class="bg-gray-800 border border-gray-700 p-2.5 rounded-lg text-white focus:outline-none focus:border-cyan-400">
+            </div>
+            <button id="btnConnect" class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold px-4 py-2 rounded-lg transition">تفعيل الاتصال بـ Firestore</button>
+        </div>
+
+        <!-- Form Add Story -->
+        <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 mb-8 shadow-lg">
+            <h2 class="text-lg font-bold mb-4 text-cyan-300">إضافة قصة جديدة</h2>
+            <form id="storyForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="storyTitle" required placeholder="عنوان القصة..." class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-cyan-400">
+                    <input type="text" id="storyAuthor" required placeholder="اسم الكاتب..." class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-cyan-400">
+                    <input type="text" id="storyGenre" required placeholder="التصنيف (Sci-Fi, Cyberpunk, Time Travel...)" class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-cyan-400">
+                    <input type="url" id="storyCover" required placeholder="رابط صورة الغلاف (Cover URL)..." class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-cyan-400">
+                </div>
+                <textarea id="storyDesc" required placeholder="ملخص القصة..." class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg text-white mt-4 focus:outline-none focus:border-cyan-400 h-24"></textarea>
+                <button type="submit" class="mt-4 bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-6 py-3 rounded-lg transition">نشر القصة الجديدة</button>
+            </form>
+        </div>
+
+        <!-- Dynamic Parts Section -->
+        <div id="partsSection" class="bg-gray-900 p-6 rounded-2xl border border-purple-500/40 mb-8 shadow-lg hidden">
+            <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
+                <h2 id="activeStoryTitle" class="text-lg font-bold text-cyan-300">إضافة أجزاء للقصة</h2>
+                <button id="btnCloseParts" class="text-xs text-gray-400 hover:text-white bg-gray-800 px-3 py-1 rounded">إغلاق</button>
+            </div>
+            <form id="partForm" class="space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input type="number" id="partNum" required min="1" value="1" placeholder="رقم الجزء..." class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-cyan-400">
+                    <input type="text" id="partTitle" required placeholder="عنوان الجزء..." class="md:col-span-2 bg-gray-800 border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-cyan-400">
+                </div>
+                <textarea id="partContent" required placeholder="محتوى الجزء (Markdown)..." class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-cyan-400 h-40 font-mono text-sm"></textarea>
+                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2.5 rounded-lg transition">نشر هذا الجزء المباشر</button>
+            </form>
+        </div>
+
+        <!-- Stories List -->
+        <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-lg">
+            <h2 class="text-lg font-bold mb-4 text-cyan-300">القصص المنشورة</h2>
+            <div id="storiesContainer" class="space-y-3">
+                <p class="text-sm text-gray-500">جاري تحميل القصص...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase v10 Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        let db = null;
+        let selectedStoryId = null;
+
+        document.getElementById('btnConnect').addEventListener('click', () => {
+            const apiKey = document.getElementById('cfgApiKey').value.trim();
+            const projectId = document.getElementById('cfgProjectId').value.trim();
+            if (!apiKey || !projectId) return alert('الرجاء إدخال البيانات المطلوب للاتصال');
+
+            try {
+                const app = initializeApp({ apiKey, authDomain: `${projectId}.firebaseapp.com`, projectId });
+                db = getFirestore(app);
+                document.getElementById('connectionStatus').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> متصل بـ Firestore Mباشر`;
+                listenStories();
+            } catch (err) {
+                alert('خطأ في الاتصال: ' + err.message);
+            }
+        });
+
+        function listenStories() {
+            if (!db) return;
+            const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                const stories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderStories(stories);
+            });
+        }
+
+        function renderStories(stories) {
+            const container = document.getElementById('storiesContainer');
+            if (stories.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500">لا توجد قصص حالياً.</p>';
+                return;
+            }
+            container.innerHTML = stories.map(s => `
+                <div class="bg-gray-800 p-4 rounded-xl flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="${s.coverUrl}" class="w-12 h-16 object-cover rounded">
+                        <div>
+                            <h3 class="font-bold text-white">${s.title}</h3>
+                            <p class="text-xs text-gray-400">الكاتب: ${s.author} | التصنيف: ${s.genre}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="window.manageParts('${s.id}', '${s.title}')" class="bg-cyan-500/20 text-cyan-300 text-xs px-3 py-1.5 rounded border border-cyan-500/30">+ أجزاء القصة</button>
+                        <button onclick="window.removeStory('${s.id}')" class="bg-red-500/20 text-red-300 text-xs px-3 py-1.5 rounded border border-red-500/30">حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('storyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!db) return alert('الرجاء الاتصال بـ Firebase أولاً');
+            await addDoc(collection(db, "stories"), {
+                title: document.getElementById('storyTitle').value,
+                author: document.getElementById('storyAuthor').value,
+                genre: document.getElementById('storyGenre').value,
+                coverUrl: document.getElementById('storyCover').value,
+                description: document.getElementById('storyDesc').value,
+                createdAt: serverTimestamp()
+            });
+            alert('تم نشر القصة بنجاح!');
+            document.getElementById('storyForm').reset();
+        });
+
+        window.manageParts = function(id, title) {
+            selectedStoryId = id;
+            document.getElementById('activeStoryTitle').innerText = `إضافة أجزاء لـ: ${title}`;
+            document.getElementById('partsSection').classList.remove('hidden');
+        };
+
+        document.getElementById('btnCloseParts').addEventListener('click', () => {
+            document.getElementById('partsSection').classList.add('hidden');
+        });
+
+        document.getElementById('partForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!db || !selectedStoryId) return;
+            await addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
+                partNumber: parseInt(document.getElementById('partNum').value),
+                title: document.getElementById('partTitle').value,
+                content: document.getElementById('partContent').value,
+                createdAt: serverTimestamp()
+            });
+            alert('تم نشر الجزء بنجاح!');
+            document.getElementById('partForm').reset();
+        });
+
+        window.removeStory = async function(id) {
+            if (!confirm('حذف هذه القصة؟') || !db) return;
+            await deleteDoc(doc(db, "stories", id));
+        };
+    </script>
+</body>
+</html>
