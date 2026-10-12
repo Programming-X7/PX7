@@ -20,19 +20,9 @@
             </div>
             <div id="connectionStatus" class="text-xs bg-purple-900/60 text-cyan-300 px-3 py-1.5 rounded-full border border-purple-500 flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                <span>متصل بـ Firebase Live</span>
+                <span>جاري الاتصال بـ Firebase...</span>
             </div>
         </header>
-
-        <!-- Firebase Config Card -->
-        <div class="bg-gray-900 p-5 rounded-2xl border border-gray-800 mb-8 shadow-lg">
-            <h2 class="text-sm font-bold text-cyan-300 mb-2">تكوين الاتصال (Firebase Config)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs mb-3">
-                <input type="text" id="cfgApiKey" placeholder="API Key..." class="bg-gray-800 border border-gray-700 p-2.5 rounded-lg text-white focus:outline-none focus:border-cyan-400">
-                <input type="text" id="cfgProjectId" placeholder="Project ID..." class="bg-gray-800 border border-gray-700 p-2.5 rounded-lg text-white focus:outline-none focus:border-cyan-400">
-            </div>
-            <button id="btnConnect" class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold px-4 py-2 rounded-lg transition">تفعيل الاتصال بـ Firestore</button>
-        </div>
 
         <!-- Form Add Story -->
         <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 mb-8 shadow-lg">
@@ -74,28 +64,33 @@
         </div>
     </div>
 
-    <!-- Firebase v10 Script -->
+    <!-- Firebase Script & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Your Config Direct Here
+        const firebaseConfig = {
+            apiKey: "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ",
+            authDomain: "com-oussama-myapplicatio-c32d4.firebaseapp.com",
+            projectId: "com-oussama-myapplicatio-c32d4",
+            storageBucket: "com-oussama-myapplicatio-c32d4.firebasestorage.app",
+            messagingSenderId: "65318768984",
+            appId: "1:65318768984:web:b3d9356b827695717b552d"
+        };
+
         let db = null;
         let selectedStoryId = null;
 
-        document.getElementById('btnConnect').addEventListener('click', () => {
-            const apiKey = document.getElementById('cfgApiKey').value.trim();
-            const projectId = document.getElementById('cfgProjectId').value.trim();
-            if (!apiKey || !projectId) return alert('الرجاء إدخال البيانات المطلوب للاتصال');
-
-            try {
-                const app = initializeApp({ apiKey, authDomain: `${projectId}.firebaseapp.com`, projectId });
-                db = getFirestore(app);
-                document.getElementById('connectionStatus').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> متصل بـ Firestore Mباشر`;
-                listenStories();
-            } catch (err) {
-                alert('خطأ في الاتصال: ' + err.message);
-            }
-        });
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            document.getElementById('connectionStatus').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> متصل بـ Firestore مباشر`;
+            listenStories();
+        } catch (err) {
+            document.getElementById('connectionStatus').innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500"></span> خطأ في الاتصال`;
+            console.error(err);
+        }
 
         function listenStories() {
             if (!db) return;
@@ -103,27 +98,30 @@
             onSnapshot(q, (snapshot) => {
                 const stories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderStories(stories);
+            }, (error) => {
+                console.error("Firestore Error: ", error);
+                document.getElementById('storiesContainer').innerHTML = '<p class="text-sm text-red-400">خطأ في جلب البيانات. تأكد من قواعد الأمان (Firestore Security Rules).</p>';
             });
         }
 
         function renderStories(stories) {
             const container = document.getElementById('storiesContainer');
             if (stories.length === 0) {
-                container.innerHTML = '<p class="text-sm text-gray-500">لا توجد قصص حالياً.</p>';
+                container.innerHTML = '<p class="text-sm text-gray-500">لا توجد قصص حالياً. أضف قصة جديدة بالأسفل.</p>';
                 return;
             }
             container.innerHTML = stories.map(s => `
-                <div class="bg-gray-800 p-4 rounded-xl flex items-center justify-between">
+                <div class="bg-gray-800 p-4 rounded-xl flex items-center justify-between border border-gray-700/50">
                     <div class="flex items-center gap-3">
-                        <img src="${s.coverUrl}" class="w-12 h-16 object-cover rounded">
+                        <img src="${s.coverUrl}" class="w-12 h-16 object-cover rounded" onerror="this.src='https://via.placeholder.com/50x70?text=Sci-Fi'">
                         <div>
-                            <h3 class="font-bold text-white">${s.title}</h3>
+                            <h3 class="font-bold text-white text-base">${s.title}</h3>
                             <p class="text-xs text-gray-400">الكاتب: ${s.author} | التصنيف: ${s.genre}</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="window.manageParts('${s.id}', '${s.title}')" class="bg-cyan-500/20 text-cyan-300 text-xs px-3 py-1.5 rounded border border-cyan-500/30">+ أجزاء القصة</button>
-                        <button onclick="window.removeStory('${s.id}')" class="bg-red-500/20 text-red-300 text-xs px-3 py-1.5 rounded border border-red-500/30">حذف</button>
+                        <button onclick="window.manageParts('${s.id}', '${s.title}')" class="bg-cyan-500/20 text-cyan-300 text-xs px-3 py-1.5 rounded border border-cyan-500/30 hover:bg-cyan-500/30 transition">+ أجزاء القصة</button>
+                        <button onclick="window.removeStory('${s.id}')" class="bg-red-500/20 text-red-300 text-xs px-3 py-1.5 rounded border border-red-500/30 hover:bg-red-500/30 transition">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -131,23 +129,28 @@
 
         document.getElementById('storyForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!db) return alert('الرجاء الاتصال بـ Firebase أولاً');
-            await addDoc(collection(db, "stories"), {
-                title: document.getElementById('storyTitle').value,
-                author: document.getElementById('storyAuthor').value,
-                genre: document.getElementById('storyGenre').value,
-                coverUrl: document.getElementById('storyCover').value,
-                description: document.getElementById('storyDesc').value,
-                createdAt: serverTimestamp()
-            });
-            alert('تم نشر القصة بنجاح!');
-            document.getElementById('storyForm').reset();
+            if (!db) return alert('الرجاء الانتظار حتى يتم الاتصال بـ Firebase');
+            try {
+                await addDoc(collection(db, "stories"), {
+                    title: document.getElementById('storyTitle').value,
+                    author: document.getElementById('storyAuthor').value,
+                    genre: document.getElementById('storyGenre').value,
+                    coverUrl: document.getElementById('storyCover').value,
+                    description: document.getElementById('storyDesc').value,
+                    createdAt: serverTimestamp()
+                });
+                alert('تم نشر القصة بنجاح!');
+                document.getElementById('storyForm').reset();
+            } catch (err) {
+                alert('خطأ أثناء النشر: ' + err.message);
+            }
         });
 
         window.manageParts = function(id, title) {
             selectedStoryId = id;
             document.getElementById('activeStoryTitle').innerText = `إضافة أجزاء لـ: ${title}`;
             document.getElementById('partsSection').classList.remove('hidden');
+            window.scrollTo({ top: document.getElementById('partsSection').offsetTop, behavior: 'smooth' });
         };
 
         document.getElementById('btnCloseParts').addEventListener('click', () => {
@@ -157,40 +160,29 @@
         document.getElementById('partForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!db || !selectedStoryId) return;
-            await addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
-                partNumber: parseInt(document.getElementById('partNum').value),
-                title: document.getElementById('partTitle').value,
-                content: document.getElementById('partContent').value,
-                createdAt: serverTimestamp()
-            });
-            alert('تم نشر الجزء بنجاح!');
-            document.getElementById('partForm').reset();
+            try {
+                await addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
+                    partNumber: parseInt(document.getElementById('partNum').value),
+                    title: document.getElementById('partTitle').value,
+                    content: document.getElementById('partContent').value,
+                    createdAt: serverTimestamp()
+                });
+                alert('تم نشر الجزء بنجاح!');
+                document.getElementById('partForm').reset();
+            } catch (err) {
+                alert('خطأ أثناء نشر الجزء: ' + err.message);
+            }
         });
 
         window.removeStory = async function(id) {
-            if (!confirm('حذف هذه القصة؟') || !db) return;
-            await deleteDoc(doc(db, "stories", id));
+            if (!confirm('هل أنت متأكد من حذف هذه القصة؟') || !db) return;
+            try {
+                await deleteDoc(doc(db, "stories", id));
+                alert('تم حذف القصة بنجاح.');
+            } catch (err) {
+                alert('خطأ أثناء الحذف: ' + err.message);
+            }
         };
     </script>
-
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ",
-    authDomain: "com-oussama-myapplicatio-c32d4.firebaseapp.com",
-    projectId: "com-oussama-myapplicatio-c32d4",
-    storageBucket: "com-oussama-myapplicatio-c32d4.firebasestorage.app",
-    messagingSenderId: "65318768984",
-    appId: "1:65318768984:web:b3d9356b827695717b552d"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
 </body>
 </html>
