@@ -41,7 +41,7 @@
 <body class="p-4 md:p-8 min-h-screen flex flex-col justify-between">
     <div class="max-w-5xl mx-auto w-full">
 
-        <!-- Header Bar with Contact Info -->
+        <!-- Header Bar with Direct WhatsApp & Contact Links -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyanNeon/20 pb-5 gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyanNeon to-purpleNeon p-0.5 shadow-lg shadow-cyanNeon/20">
@@ -53,18 +53,18 @@
                     <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
                         لوحة تحكم قصص الخيال العلمي <span class="text-xs font-orbitron font-semibold text-cyanNeon bg-cyan-950/60 border border-cyanNeon/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
                     </h1>
-                    <p class="text-xs text-slate-400">نظام الإشراف والموافقة على القصص والمزامنة الحية مع تطبيق الهاتف</p>
+                    <p class="text-xs text-slate-400">نظام الإشراف والموافقة والتعديل المباشر الموازي للتطبيق</p>
                 </div>
             </div>
 
-            <!-- Contact Header Info -->
+            <!-- Contact Header Info with Direct WhatsApp -->
             <div class="flex flex-col md:flex-row items-end md:items-center gap-3 text-xs">
-                <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300 flex items-center gap-2">
+                <a href="mailto:info.designerweb99@gmail.com" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300 flex items-center gap-2 transition">
                     <span class="text-cyanNeon">✉</span> info.designerweb99@gmail.com
-                </div>
-                <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300 flex items-center gap-2">
-                    <span class="text-emerald-400">📱</span> WhatsApp: 0770-217907
-                </div>
+                </a>
+                <a href="https://wa.me/212770217907" target="_blank" class="bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-emerald-400 font-bold flex items-center gap-2 transition">
+                    <span>💬</span> WhatsApp: 0770-217907
+                </a>
                 <div id="connectionStatus" class="font-semibold bg-emerald-950/80 text-emerald-400 px-3 py-1.5 rounded-xl border border-emerald-500/40 flex items-center gap-2">
                     <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
                     <span id="statusText">متصل مباشر بـ Firestore</span>
@@ -97,7 +97,7 @@
             </button>
         </div>
 
-        <!-- Add Story Section with Approval Option -->
+        <!-- Add Story Section with Auto Approve Checkbox -->
         <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl">
             <h2 class="text-lg font-extrabold text-white mb-4 flex items-center gap-2">
                 <span class="text-cyanNeon">✦</span> إضافة قصة جديدة إلى المنصة
@@ -157,6 +157,57 @@
                     <span id="btnPublishText">نشر القصة الآن</span>
                     <span id="btnPublishSpinner" class="hidden animate-spin">⏳</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- Edit Story Modal (Hidden by default) -->
+        <div id="editStoryModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-bgCard border border-cyanNeon/40 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 class="text-lg font-extrabold text-white">تعديل بيانات القصة</h3>
+                    <button type="button" onclick="closeEditModal()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg">إغلاق</button>
+                </div>
+
+                <input type="hidden" id="editStoryId">
+
+                <div>
+                    <label for="editTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان القصة</label>
+                    <input type="text" id="editTitle" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="editAuthor" class="block text-xs font-semibold text-slate-300 mb-1">الكاتب</label>
+                        <input type="text" id="editAuthor" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                    </div>
+                    <div>
+                        <label for="editGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف</label>
+                        <select id="editGenre" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                            <option value="Cyberpunk">Cyberpunk</option>
+                            <option value="Time Travel">Time Travel</option>
+                            <option value="Space Opera">Space Opera</option>
+                            <option value="AI & Robots">AI & Robots</option>
+                            <option value="Sci-Fi">Sci-Fi العامة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="editCover" class="block text-xs font-semibold text-slate-300 mb-1">رابط الغلاف</label>
+                    <input type="url" id="editCover" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                </div>
+
+                <div>
+                    <label for="editDesc" class="block text-xs font-semibold text-slate-300 mb-1">الملخص</label>
+                    <textarea id="editDesc" rows="3" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm"></textarea>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="saveEditedStory()" class="bg-cyanNeon hover:opacity-90 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl transition text-sm">
+                        حفظ التعديلات
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="text-xs text-slate-400 hover:text-white">إلغاء</button>
+                </div>
             </div>
         </div>
 
@@ -231,14 +282,16 @@
         </div>
     </div>
 
-    <!-- Footer Copyright -->
+    <!-- Footer Copyright with Direct WhatsApp Link -->
     <footer class="mt-12 text-center text-xs text-slate-500 py-6 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 max-w-5xl mx-auto w-full">
         <div>
             © Oussama ZCompany - All rights reserved
         </div>
         <div class="flex items-center gap-4 text-[11px] text-slate-400">
             <span>Email: info.designerweb99@gmail.com</span>
-            <span>WhatsApp: 0770-217907</span>
+            <a href="https://wa.me/212770217907" target="_blank" class="text-emerald-400 hover:underline font-bold">
+                WhatsApp: 0770-217907
+            </a>
         </div>
     </footer>
 
@@ -261,12 +314,11 @@
         let db = null;
         let auth = null;
         let selectedStoryId = null;
-        let activeTab = 'approved'; // 'approved' or 'pending'
+        let activeTab = 'approved';
         let cachedStories = [];
         let unsubscribeStories = null;
         let unsubscribeParts = null;
 
-        // Startup: Load config from localStorage or fallback to default
         window.addEventListener('DOMContentLoaded', () => {
             const savedApiKey = localStorage.getItem('scifi_api_key') || DEFAULT_CONFIG.apiKey;
             const savedProjectId = localStorage.getItem('scifi_project_id') || DEFAULT_CONFIG.projectId;
@@ -372,14 +424,13 @@
                     stories.push({
                         id: docSnap.id,
                         partsCount: partsCount,
-                        isApproved: data.isApproved !== false, // default true if omitted
+                        isApproved: data.isApproved !== false,
                         ...data
                     });
                 }
                 stories.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
                 cachedStories = stories;
 
-                // Update Pending Badge
                 const pendingCount = stories.filter(s => !s.isApproved).length;
                 const pBadge = document.getElementById('pendingBadge');
                 if (pendingCount > 0) {
@@ -425,6 +476,9 @@
                                 ✓ قبول النشر (Approve)
                             </button>
                         ` : ''}
+                        <button type="button" onclick="window.openEditModal('${s.id}')" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition">
+                            ✏ تعديل
+                        </button>
                         <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-cyanNeon/20 hover:bg-cyanNeon/30 text-cyanNeon border border-cyanNeon/40 text-xs font-bold px-3 py-2 rounded-xl transition">
                             + أجزاء القصة (Parts)
                         </button>
@@ -435,6 +489,43 @@
                 </div>
             `).join('');
         }
+
+        window.openEditModal = function(storyId) {
+            const story = cachedStories.find(s => s.id === storyId);
+            if (!story) return;
+
+            document.getElementById('editStoryId').value = story.id;
+            document.getElementById('editTitle').value = story.title || '';
+            document.getElementById('editAuthor').value = story.author || '';
+            document.getElementById('editGenre').value = story.genre || 'Sci-Fi';
+            document.getElementById('editCover').value = story.coverUrl || '';
+            document.getElementById('editDesc').value = story.description || '';
+
+            document.getElementById('editStoryModal').classList.remove('hidden');
+        };
+
+        window.closeEditModal = function() {
+            document.getElementById('editStoryModal').classList.add('hidden');
+        };
+
+        window.saveEditedStory = async function() {
+            const id = document.getElementById('editStoryId').value;
+            if (!id || !db) return;
+
+            try {
+                await updateDoc(doc(db, "stories", id), {
+                    title: document.getElementById('editTitle').value.trim(),
+                    author: document.getElementById('editAuthor').value.trim(),
+                    genre: document.getElementById('editGenre').value,
+                    coverUrl: document.getElementById('editCover').value.trim(),
+                    description: document.getElementById('editDesc').value.trim(),
+                });
+                alert('✅ تم حفظ التعديلات بنجاح!');
+                closeEditModal();
+            } catch (err) {
+                alert('❌ فشل حفظ التعديلات: ' + err.message);
+            }
+        };
 
         window.approveStory = async function(storyId) {
             if (!db) return;
