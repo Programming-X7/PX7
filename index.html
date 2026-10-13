@@ -14,39 +14,39 @@
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen flex flex-col justify-between">
-<div class="max-w-5xl mx-auto w-full">
-    <!-- Header Bar -->
-    <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyan-500/20 pb-5 gap-4">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-purple-600 p-0.5 shadow-lg shadow-cyan-500/20">
-                <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
-                    🚀
+    <div class="max-w-5xl mx-auto w-full">
+        <!-- Header Bar -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyan-500/20 pb-5 gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-purple-600 p-0.5 shadow-lg shadow-cyan-500/20">
+                    <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
+                        🚀
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
+                        لوحة تحكم القصص <span class="text-xs font-orbitron font-semibold text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">منصة نشر وإدارة قصص الخيال العلمي والمزامنة الحية مع التطبيق</p>
                 </div>
             </div>
-            <div>
-                <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
-                    لوحة تحكم القصص <span class="text-xs font-orbitron font-semibold text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
-                </h1>
-                <p class="text-xs text-slate-400">منصة نشر وإدارة قصص الخيال العلمي والمزامنة الحية مع التطبيق</p>
+
+            <div id="connectionStatus" class="text-xs font-semibold bg-emerald-950/80 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/40 flex items-center gap-2">
+                <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span id="statusText">متصل بـ Firebase Firestore</span>
             </div>
-        </div>
+        </header>
 
-        <div id="connectionStatus" class="text-xs font-semibold bg-emerald-950/80 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/40 flex items-center gap-2">
-            <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-            <span id="statusText">متصل بـ Firebase Firestore</span>
-        </div>
-    </header>
-
-    <!-- Firestore Rules Guide Warning Box -->
-    <div id="rulesWarningBox" class="hidden bg-amber-950/60 border border-amber-500/50 rounded-2xl p-5 mb-8 text-amber-200 text-xs shadow-xl">
-        <div class="flex items-center justify-between mb-2">
-            <h3 class="font-bold text-sm text-amber-400 flex items-center gap-2">
-                ⚠️ تنبيه: قواعد حماية Firestore (Security Rules) تمنع الكتابة!
-            </h3>
-            <button onclick="document.getElementById('rulesWarningBox').classList.add('hidden')" class="text-amber-400 hover:underline text-xs">إغلاق</button>
-        </div>
-        <p class="mb-3">للتأكد من نشر القصص بنجاح، افتح **Firebase Console -> Firestore Database -> Rules** وضع القواعد التالية:</p>
-        <pre class="bg-slate-950 p-3 rounded-xl border border-amber-500/30 text-emerald-400 font-mono text-[11px] overflow-x-auto">rules_version = '2';
+        <!-- Firestore Rules Guide Warning Box (Hidden by default, shown on permission error) -->
+        <div id="rulesWarningBox" class="hidden bg-amber-950/60 border border-amber-500/50 rounded-2xl p-5 mb-8 text-amber-200 text-xs shadow-xl">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold text-sm text-amber-400 flex items-center gap-2">
+                    ⚠️ تنبيه: قواعد حماية Firestore (Security Rules) تمنع الكتابة!
+                </h3>
+                <button onclick="document.getElementById('rulesWarningBox').classList.add('hidden')" class="text-amber-400 hover:underline text-xs">إغلاق</button>
+            </div>
+            <p class="mb-3">للتأكد من نشر القصص بنجاح، افتح **Firebase Console -> Firestore Database -> Rules** وضع القواعد التالية:</p>
+            <pre class="bg-slate-950 p-3 rounded-xl border border-amber-500/30 text-emerald-400 font-mono text-[11px] overflow-x-auto">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
@@ -54,377 +54,377 @@ service cloud.firestore {
     }
   }
 }</pre>
-    </div>
-
-    <!-- Add New Story Section -->
-    <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 mb-8 shadow-xl">
-        <h2 class="text-lg font-extrabold text-white mb-4 flex items-center gap-2">
-            <span class="text-cyan-400">✦</span> إضافة قصة جديدة إلى المنصة
-        </h2>
-
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="storyTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان القصة</label>
-                    <input type="text" id="storyTitle" placeholder="مثال: شعاع المجرة" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
-                </div>
-                <div>
-                    <label for="storyAuthor" class="block text-xs font-semibold text-slate-300 mb-1">اسم الكاتب</label>
-                    <input type="text" id="storyAuthor" placeholder="مثال: د. زياد الفاسي" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
-                </div>
-                <div>
-                    <label for="storyGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف الرئيسي</label>
-                    <select id="storyGenre" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
-                        <option value="Cyberpunk">Cyberpunk</option>
-                        <option value="Time Travel">Time Travel</option>
-                        <option value="Space Opera">Space Opera</option>
-                        <option value="AI & Robots">AI & Robots</option>
-                        <option value="Sci-Fi">Sci-Fi العامة</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="storyCover" class="block text-xs font-semibold text-slate-300 mb-1">رابط صورة الغلاف (Cover Image URL)</label>
-                    <input type="url" id="storyCover" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
-                </div>
-            </div>
-
-            <!-- Cover Image Presets -->
-            <div>
-                <span class="block text-[11px] font-semibold text-cyan-400 mb-2">أغلفة جاهزة اختر منها بضغطة زر:</span>
-                <div class="flex flex-wrap gap-2 text-xs">
-                    <button type="button" onclick="setCover('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Cyberpunk</button>
-                    <button type="button" onclick="setCover('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Time Travel</button>
-                    <button type="button" onclick="setCover('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Space Opera</button>
-                    <button type="button" onclick="setCover('https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف AI & Robots</button>
-                </div>
-            </div>
-
-            <div>
-                <label for="storyDesc" class="block text-xs font-semibold text-slate-300 mb-1">ملخص القصة (Synopsis)</label>
-                <textarea id="storyDesc" rows="3" placeholder="اكتب ملخصاً مشوقاً للقصة..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm"></textarea>
-            </div>
-
-            <button type="button" id="btnPublishStory" onclick="publishNewStory()" class="bg-gradient-to-r from-cyan-400 to-purple-600 hover:opacity-95 text-slate-950 font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-cyan-500/20 flex items-center gap-2">
-                <span id="btnPublishText">نشر القصة الآن</span>
-                <span id="btnPublishSpinner" class="hidden animate-spin">⏳</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Dynamic Parts Management Section -->
-    <div id="partsSection" class="bg-slate-900 border border-purple-500/50 rounded-2xl p-6 mb-8 shadow-2xl hidden">
-        <div class="flex justify-between items-center mb-4 border-b border-purple-500/30 pb-3">
-            <div>
-                <span class="text-xs text-cyan-400 font-bold uppercase tracking-wider">Sub-Collection Manager</span>
-                <h3 id="activeStoryTitle" class="text-xl font-extrabold text-white">إدارة أجزاء القصة</h3>
-            </div>
-            <button type="button" onclick="closePartsSection()" class="text-xs text-slate-300 hover:text-white bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl transition">
-                إغلاق
-            </button>
         </div>
 
-        <!-- Form: Add Part -->
-        <div class="space-y-4 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label for="partNum" class="block text-xs font-semibold text-slate-300 mb-1">رقم الجزء</label>
-                    <input type="number" id="partNum" min="1" value="1" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
-                </div>
-                <div class="md:col-span-2">
-                    <label for="partTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان الجزء</label>
-                    <input type="text" id="partTitle" placeholder="مثال: الجزء الأول: الاستيقاظ في الصمت" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
-                </div>
-            </div>
-
-            <div>
-                <label for="partContent" class="block text-xs font-semibold text-slate-300 mb-1">محتوى الجزء (Markdown Text)</label>
-                <textarea id="partContent" rows="8" placeholder="# عنوان الجزء&#10;&#10;نص الفصل يدعم Markdown بشكل كامل..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm font-mono"></textarea>
-            </div>
-
-            <button type="button" onclick="publishNewPart()" class="bg-purple-600 hover:bg-purple-500 text-white font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-purple-600/30">
-                نشر هذا الجزء المباشر
-            </button>
-        </div>
-
-        <!-- Parts List for Selected Story -->
-        <div class="border-t border-slate-800 pt-4">
-            <h4 class="text-xs font-bold text-slate-400 mb-3">الأجزاء المنشورة لهذه القصة:</h4>
-            <div id="partsContainer" class="space-y-2">
-                <!-- Dynamic parts load here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Live Stories List -->
-    <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 shadow-xl">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
-                القصص المنشورة حالياً في Firestore المباشر
+        <!-- Add New Story Section -->
+        <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 mb-8 shadow-xl">
+            <h2 class="text-lg font-extrabold text-white mb-4 flex items-center gap-2">
+                <span class="text-cyan-400">✦</span> إضافة قصة جديدة إلى المنصة
             </h2>
-            <span id="storiesBadge" class="bg-cyan-950 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full border border-cyan-500/30">
-                    0 قصص
-                </span>
-        </div>
 
-        <div id="storiesContainer" class="space-y-4">
-            <div class="text-center py-10 text-slate-500">
-                جاري تحميل القصص المباشرة من Firebase...
-            </div>
-        </div>
-    </div>
-</div>
-
-<footer class="mt-12 text-center text-xs text-slate-500 py-4 border-t border-slate-800">
-    منصة قصص الخيال العلمي - Web Admin &copy; 2026 | Live Sync Active
-</footer>
-
-<!-- Firebase v10 JavaScript SDK -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ",
-        authDomain: "com-oussama-myapplicatio-c32d4.firebaseapp.com",
-        projectId: "com-oussama-myapplicatio-c32d4",
-        storageBucket: "com-oussama-myapplicatio-c32d4.firebasestorage.app",
-        messagingSenderId: "65318768984",
-        appId: "1:65318768984:web:b3d9356b827695717b552d"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    let selectedStoryId = null;
-    let unsubscribeStories = null;
-    let unsubscribeParts = null;
-
-    // Auto authenticate anonymously on startup
-    signInAnonymously(auth).then(() => {
-        console.log("Firebase Anonymous Auth Connected.");
-    }).catch(err => {
-        console.warn("Auth notice:", err);
-    });
-
-    // Helper preset cover function
-    window.setCover = function(url) {
-        document.getElementById('storyCover').value = url;
-    };
-
-    // Live Stories Listener
-    function listenStories() {
-        if (unsubscribeStories) unsubscribeStories();
-
-        const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
-        unsubscribeStories = onSnapshot(q, async (snapshot) => {
-            const stories = [];
-            for (let docSnap of snapshot.docs) {
-                let partsCount = 0;
-                try {
-                    const partsSnap = await getDocs(collection(db, `stories/${docSnap.id}/parts`));
-                    partsCount = partsSnap.docs.length;
-                } catch (_) {}
-
-                stories.push({
-                    id: docSnap.id,
-                    partsCount: partsCount,
-                    ...docSnap.data()
-                });
-            }
-            renderStories(stories);
-        }, (error) => {
-            console.error("Firestore Listen Error:", error);
-            if (error.code === 'permission-denied') {
-                document.getElementById('rulesWarningBox').classList.remove('hidden');
-            }
-        });
-    }
-
-    function renderStories(stories) {
-        const container = document.getElementById('storiesContainer');
-        document.getElementById('storiesBadge').innerText = `${stories.length} قصص`;
-
-        if (stories.length === 0) {
-            container.innerHTML = `<div class="text-center py-8 text-slate-500">لا توجد قصص حالياً في Firestore. أضف قصة جديدة من النموذج بالأعلى!</div>`;
-            return;
-        }
-
-        container.innerHTML = stories.map(s => `
-            <div class="bg-slate-950 border border-slate-800 hover:border-cyan-500/50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition">
-                <div class="flex items-center gap-4 w-full md:w-auto">
-                    <img src="${s.coverUrl}" alt="Cover" class="w-14 h-18 object-cover rounded-lg border border-slate-700" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80'">
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <span class="text-[10px] bg-purple-950 text-cyan-400 font-bold px-2 py-0.5 rounded border border-purple-500/40">${s.genre || 'Sci-Fi'}</span>
-                        <h3 class="font-extrabold text-white text-base mt-1">${s.title}</h3>
-                        <p class="text-xs text-slate-400">الكاتب: ${s.author} | ${s.partsCount} أجزاء متاحة</p>
+                        <label for="storyTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان القصة</label>
+                        <input type="text" id="storyTitle" placeholder="مثال: شعاع المجرة" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label for="storyAuthor" class="block text-xs font-semibold text-slate-300 mb-1">اسم الكاتب</label>
+                        <input type="text" id="storyAuthor" placeholder="مثال: د. زياد الفاسي" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label for="storyGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف الرئيسي</label>
+                        <select id="storyGenre" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                            <option value="Cyberpunk">Cyberpunk</option>
+                            <option value="Time Travel">Time Travel</option>
+                            <option value="Space Opera">Space Opera</option>
+                            <option value="AI & Robots">AI & Robots</option>
+                            <option value="Sci-Fi">Sci-Fi العامة</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="storyCover" class="block text-xs font-semibold text-slate-300 mb-1">رابط صورة الغلاف (Cover Image URL)</label>
+                        <input type="url" id="storyCover" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
                     </div>
                 </div>
-                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                    <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold px-3 py-2 rounded-xl transition">
-                        + أجزاء القصة (Parts)
-                    </button>
-                    <button type="button" onclick="window.deleteStory('${s.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-bold px-3 py-2 rounded-xl transition">
-                        حذف القصة
-                    </button>
+
+                <!-- Cover Image Presets -->
+                <div>
+                    <span class="block text-[11px] font-semibold text-cyan-400 mb-2">أغلفة جاهزة اختر منها بضغطة زر:</span>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <button type="button" onclick="setCover('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Cyberpunk</button>
+                        <button type="button" onclick="setCover('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Time Travel</button>
+                        <button type="button" onclick="setCover('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Space Opera</button>
+                        <button type="button" onclick="setCover('https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف AI & Robots</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="storyDesc" class="block text-xs font-semibold text-slate-300 mb-1">ملخص القصة (Synopsis)</label>
+                    <textarea id="storyDesc" rows="3" placeholder="اكتب ملخصاً مشوقاً للقصة..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm"></textarea>
+                </div>
+
+                <button type="button" id="btnPublishStory" onclick="publishNewStory()" class="bg-gradient-to-r from-cyan-400 to-purple-600 hover:opacity-95 text-slate-950 font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+                    <span id="btnPublishText">نشر القصة الآن</span>
+                    <span id="btnPublishSpinner" class="hidden animate-spin">⏳</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dynamic Parts Management Section -->
+        <div id="partsSection" class="bg-slate-900 border border-purple-500/50 rounded-2xl p-6 mb-8 shadow-2xl hidden">
+            <div class="flex justify-between items-center mb-4 border-b border-purple-500/30 pb-3">
+                <div>
+                    <span class="text-xs text-cyan-400 font-bold uppercase tracking-wider">Sub-Collection Manager</span>
+                    <h3 id="activeStoryTitle" class="text-xl font-extrabold text-white">إدارة أجزاء القصة</h3>
+                </div>
+                <button type="button" onclick="closePartsSection()" class="text-xs text-slate-300 hover:text-white bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl transition">
+                    إغلاق
+                </button>
+            </div>
+
+            <!-- Form: Add Part -->
+            <div class="space-y-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="partNum" class="block text-xs font-semibold text-slate-300 mb-1">رقم الجزء</label>
+                        <input type="number" id="partNum" min="1" value="1" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="partTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان الجزء</label>
+                        <input type="text" id="partTitle" placeholder="مثال: الجزء الأول: الاستيقاظ في الصمت" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="partContent" class="block text-xs font-semibold text-slate-300 mb-1">محتوى الجزء (Markdown Text)</label>
+                    <textarea id="partContent" rows="8" placeholder="# عنوان الجزء&#10;&#10;نص الفصل يدعم Markdown بشكل كامل..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm font-mono"></textarea>
+                </div>
+
+                <button type="button" onclick="publishNewPart()" class="bg-purple-600 hover:bg-purple-500 text-white font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-purple-600/30">
+                    نشر هذا الجزء المباشر
+                </button>
+            </div>
+
+            <!-- Parts List for Selected Story -->
+            <div class="border-t border-slate-800 pt-4">
+                <h4 class="text-xs font-bold text-slate-400 mb-3">الأجزاء المنشورة لهذه القصة:</h4>
+                <div id="partsContainer" class="space-y-2">
+                    <!-- Dynamic parts load here -->
                 </div>
             </div>
-        `).join('');
-    }
+        </div>
 
-    // Publish New Story Function
-    window.publishNewStory = async function() {
-        const title = document.getElementById('storyTitle').value.trim();
-        const author = document.getElementById('storyAuthor').value.trim();
-        const genre = document.getElementById('storyGenre').value;
-        const coverUrl = document.getElementById('storyCover').value.trim() || 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80';
-        const description = document.getElementById('storyDesc').value.trim();
-
-        if (!title || !author || !description) {
-            alert('الرجاء ملء جميع الحقول المطلوبة (العنوان، الكاتب، الملخص)');
-            return;
-        }
-
-        const btnText = document.getElementById('btnPublishText');
-        const btnSpinner = document.getElementById('btnPublishSpinner');
-
-        btnText.innerText = "جاري النشر...";
-        btnSpinner.classList.remove('hidden');
-
-        try {
-            await addDoc(collection(db, "stories"), {
-                title: title,
-                author: author,
-                genre: genre,
-                coverUrl: coverUrl,
-                description: description,
-                likesCount: 0,
-                viewsCount: 0,
-                createdAt: serverTimestamp()
-            });
-
-            alert('✅ تم نشر القصة بنجاح وسوف تظهر الآن في التطبيق في الوقت الفعلي!');
-            
-            // Clear Inputs
-            document.getElementById('storyTitle').value = '';
-            document.getElementById('storyAuthor').value = '';
-            document.getElementById('storyCover').value = '';
-            document.getElementById('storyDesc').value = '';
-
-        } catch (error) {
-            console.error("Publish Error:", error);
-            alert('❌ حدث خطأ أثناء النشر: ' + error.message);
-            if (error.code === 'permission-denied') {
-                document.getElementById('rulesWarningBox').classList.remove('hidden');
-            }
-        } finally {
-            btnText.innerText = "نشر القصة الآن";
-            btnSpinner.classList.add('hidden');
-        }
-    };
-
-    // Manage Dynamic Sub-collection Parts
-    window.manageParts = function(storyId, storyTitle) {
-        selectedStoryId = storyId;
-        document.getElementById('activeStoryTitle').innerText = `إدارة أجزاء: ${storyTitle}`;
-        document.getElementById('partsSection').classList.remove('hidden');
-        listenParts(storyId);
-    };
-
-    window.closePartsSection = function() {
-        document.getElementById('partsSection').classList.add('hidden');
-        if (unsubscribeParts) unsubscribeParts();
-    };
-
-    function listenParts(storyId) {
-        if (unsubscribeParts) unsubscribeParts();
-
-        const q = query(collection(db, `stories/${storyId}/parts`), orderBy("partNumber", "asc"));
-        unsubscribeParts = onSnapshot(q, (snapshot) => {
-            const parts = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
-            renderParts(parts);
-        }, (error) => {
-            console.error("Parts listen error:", error);
-        });
-    }
-
-    function renderParts(parts) {
-        const container = document.getElementById('partsContainer');
-        if (parts.length === 0) {
-            container.innerHTML = `<p class="text-xs text-slate-500">لا توجد أجزاء منشورة لهذه القصة بعد.</p>`;
-            return;
-        }
-
-        container.innerHTML = parts.map(p => `
-            <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
-                <span class="font-bold text-cyan-400">الجزء ${p.partNumber}: ${p.title}</span>
-                <button type="button" onclick="window.deletePart('${p.id}')" class="text-red-400 hover:underline">حذف</button>
+        <!-- Live Stories List -->
+        <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
+                    القصص المنشورة حالياً في Firestore المباشر
+                </h2>
+                <span id="storiesBadge" class="bg-cyan-950 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full border border-cyan-500/30">
+                    0 قصص
+                </span>
             </div>
-        `).join('');
-    }
 
-    // Publish Part
-    window.publishNewPart = async function() {
-        if (!selectedStoryId) return;
+            <div id="storiesContainer" class="space-y-4">
+                <div class="text-center py-10 text-slate-500">
+                    جاري تحميل القصص المباشرة من Firebase...
+                </div>
+            </div>
+        </div>
+    </div>
 
-        const partNumber = parseInt(document.getElementById('partNum').value) || 1;
-        const title = document.getElementById('partTitle').value.trim();
-        const content = document.getElementById('partContent').value.trim();
+    <footer class="mt-12 text-center text-xs text-slate-500 py-4 border-t border-slate-800">
+        منصة قصص الخيال العلمي - Web Admin &copy; 2026 | Live Sync Active
+    </footer>
 
-        if (!title || !content) {
-            alert('الرجاء إدخال عنوان ومحتوى الجزء!');
-            return;
-        }
+    <!-- Firebase v10 JavaScript SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        try {
-            await addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
-                partNumber: partNumber,
-                title: title,
-                content: content,
-                createdAt: serverTimestamp()
+        const firebaseConfig = {
+            apiKey: "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ",
+            authDomain: "com-oussama-myapplicatio-c32d4.firebaseapp.com",
+            projectId: "com-oussama-myapplicatio-c32d4",
+            storageBucket: "com-oussama-myapplicatio-c32d4.firebasestorage.app",
+            messagingSenderId: "65318768984",
+            appId: "1:65318768984:web:b3d9356b827695717b552d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let selectedStoryId = null;
+        let unsubscribeStories = null;
+        let unsubscribeParts = null;
+
+        // Auto authenticate anonymously on startup
+        signInAnonymously(auth).then(() => {
+            console.log("Firebase Anonymous Auth Connected.");
+        }).catch(err => {
+            console.warn("Auth notice:", err);
+        });
+
+        // Helper preset cover function
+        window.setCover = function(url) {
+            document.getElementById('storyCover').value = url;
+        };
+
+        // Live Stories Listener
+        function listenStories() {
+            if (unsubscribeStories) unsubscribeStories();
+
+            const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
+            unsubscribeStories = onSnapshot(q, async (snapshot) => {
+                const stories = [];
+                for (let docSnap of snapshot.docs) {
+                    let partsCount = 0;
+                    try {
+                        const partsSnap = await getDocs(collection(db, `stories/${docSnap.id}/parts`));
+                        partsCount = partsSnap.docs.length;
+                    } catch (_) {}
+
+                    stories.push({
+                        id: docSnap.id,
+                        partsCount: partsCount,
+                        ...docSnap.data()
+                    });
+                }
+                renderStories(stories);
+            }, (error) => {
+                console.error("Firestore Listen Error:", error);
+                if (error.code === 'permission-denied') {
+                    document.getElementById('rulesWarningBox').classList.remove('hidden');
+                }
             });
-
-            alert('✅ تم نشر الجزء بنجاح للقصة!');
-            document.getElementById('partTitle').value = '';
-            document.getElementById('partContent').value = '';
-            document.getElementById('partNum').value = partNumber + 1;
-
-        } catch (error) {
-            console.error("Part publish error:", error);
-            alert('❌ حدث خطأ أثناء نشر الجزء: ' + error.message);
         }
-    };
 
-    // Delete Story
-    window.deleteStory = async function(storyId) {
-        if (!confirm('هل أنت تأكد من حذف هذه القصة بجميع أجزائها؟')) return;
+        function renderStories(stories) {
+            const container = document.getElementById('storiesContainer');
+            document.getElementById('storiesBadge').innerText = `${stories.length} قصص`;
 
-        try {
-            const partsSnap = await getDocs(collection(db, `stories/${storyId}/parts`));
-            for (let p of partsSnap.docs) {
-                await deleteDoc(p.ref);
+            if (stories.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-500">لا توجد قصص حالياً في Firestore. أضف قصة جديدة من النموذج بالأعلى!</div>`;
+                return;
             }
-            await deleteDoc(doc(db, "stories", storyId));
-            alert('✅ تمت عملية حذف القصة بنجاح.');
-        } catch (error) {
-            alert('❌ فشل الحذف: ' + error.message);
-        }
-    };
 
-    // Delete Part
-    window.deletePart = async function(partId) {
-        if (!selectedStoryId) return;
-        if (!confirm('حذف هذا الجزء؟')) return;
-        try {
-            await deleteDoc(doc(db, `stories/${selectedStoryId}/parts`, partId));
-        } catch (error) {
-            alert('❌ فشل الحذف: ' + error.message);
+            container.innerHTML = stories.map(s => `
+                <div class="bg-slate-950 border border-slate-800 hover:border-cyan-500/50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <img src="${s.coverUrl}" alt="Cover" class="w-14 h-18 object-cover rounded-lg border border-slate-700" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80'">
+                        <div>
+                            <span class="text-[10px] bg-purple-950 text-cyan-400 font-bold px-2 py-0.5 rounded border border-purple-500/40">${s.genre || 'Sci-Fi'}</span>
+                            <h3 class="font-extrabold text-white text-base mt-1">${s.title}</h3>
+                            <p class="text-xs text-slate-400">الكاتب: ${s.author} | ${s.partsCount} أجزاء متاحة</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                        <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold px-3 py-2 rounded-xl transition">
+                            + أجزاء القصة (Parts)
+                        </button>
+                        <button type="button" onclick="window.deleteStory('${s.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-bold px-3 py-2 rounded-xl transition">
+                            حذف القصة
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
-    };
 
-    // Start listening to stories on load
-    listenStories();
-</script>
+        // Publish New Story Function
+        window.publishNewStory = async function() {
+            const title = document.getElementById('storyTitle').value.trim();
+            const author = document.getElementById('storyAuthor').value.trim();
+            const genre = document.getElementById('storyGenre').value;
+            const coverUrl = document.getElementById('storyCover').value.trim() || 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80';
+            const description = document.getElementById('storyDesc').value.trim();
+
+            if (!title || !author || !description) {
+                alert('الرجاء ملء جميع الحقول المطلوبة (العنوان، الكاتب، الملخص)');
+                return;
+            }
+
+            const btnText = document.getElementById('btnPublishText');
+            const btnSpinner = document.getElementById('btnPublishSpinner');
+
+            btnText.innerText = "جاري النشر...";
+            btnSpinner.classList.remove('hidden');
+
+            try {
+                await addDoc(collection(db, "stories"), {
+                    title: title,
+                    author: author,
+                    genre: genre,
+                    coverUrl: coverUrl,
+                    description: description,
+                    likesCount: 0,
+                    viewsCount: 0,
+                    createdAt: serverTimestamp()
+                });
+
+                alert('✅ تم نشر القصة بنجاح وسوف تظهر الآن في التطبيق في الوقت الفعلي!');
+
+                // Clear Inputs
+                document.getElementById('storyTitle').value = '';
+                document.getElementById('storyAuthor').value = '';
+                document.getElementById('storyCover').value = '';
+                document.getElementById('storyDesc').value = '';
+
+            } catch (error) {
+                console.error("Publish Error:", error);
+                alert('❌ حدث خطأ أثناء النشر: ' + error.message);
+                if (error.code === 'permission-denied') {
+                    document.getElementById('rulesWarningBox').classList.remove('hidden');
+                }
+            } finally {
+                btnText.innerText = "نشر القصة الآن";
+                btnSpinner.classList.add('hidden');
+            }
+        };
+
+        // Manage Dynamic Sub-collection Parts
+        window.manageParts = function(storyId, storyTitle) {
+            selectedStoryId = storyId;
+            document.getElementById('activeStoryTitle').innerText = `إدارة أجزاء: ${storyTitle}`;
+            document.getElementById('partsSection').classList.remove('hidden');
+            listenParts(storyId);
+        };
+
+        window.closePartsSection = function() {
+            document.getElementById('partsSection').classList.add('hidden');
+            if (unsubscribeParts) unsubscribeParts();
+        };
+
+        function listenParts(storyId) {
+            if (unsubscribeParts) unsubscribeParts();
+
+            const q = query(collection(db, `stories/${storyId}/parts`), orderBy("partNumber", "asc"));
+            unsubscribeParts = onSnapshot(q, (snapshot) => {
+                const parts = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+                renderParts(parts);
+            }, (error) => {
+                console.error("Parts listen error:", error);
+            });
+        }
+
+        function renderParts(parts) {
+            const container = document.getElementById('partsContainer');
+            if (parts.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500">لا توجد أجزاء منشورة لهذه القصة بعد.</p>`;
+                return;
+            }
+
+            container.innerHTML = parts.map(p => `
+                <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
+                    <span class="font-bold text-cyan-400">الجزء ${p.partNumber}: ${p.title}</span>
+                    <button type="button" onclick="window.deletePart('${p.id}')" class="text-red-400 hover:underline">حذف</button>
+                </div>
+            `).join('');
+        }
+
+        // Publish Part
+        window.publishNewPart = async function() {
+            if (!selectedStoryId) return;
+
+            const partNumber = parseInt(document.getElementById('partNum').value) || 1;
+            const title = document.getElementById('partTitle').value.trim();
+            const content = document.getElementById('partContent').value.trim();
+
+            if (!title || !content) {
+                alert('الرجاء إدخال عنوان ومحتوى الجزء!');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
+                    partNumber: partNumber,
+                    title: title,
+                    content: content,
+                    createdAt: serverTimestamp()
+                });
+
+                alert('✅ تم نشر الجزء بنجاح للقصة!');
+                document.getElementById('partTitle').value = '';
+                document.getElementById('partContent').value = '';
+                document.getElementById('partNum').value = partNumber + 1;
+
+            } catch (error) {
+                console.error("Part publish error:", error);
+                alert('❌ حدث خطأ أثناء نشر الجزء: ' + error.message);
+            }
+        };
+
+        // Delete Story
+        window.deleteStory = async function(storyId) {
+            if (!confirm('هل أنت تأكد من حذف هذه القصة بجميع أجزائها؟')) return;
+
+            try {
+                const partsSnap = await getDocs(collection(db, `stories/${storyId}/parts`));
+                for (let p of partsSnap.docs) {
+                    await deleteDoc(p.ref);
+                }
+                await deleteDoc(doc(db, "stories", storyId));
+                alert('✅ تمت عملية حذف القصة بنجاح.');
+            } catch (error) {
+                alert('❌ فشل الحذف: ' + error.message);
+            }
+        };
+
+        // Delete Part
+        window.deletePart = async function(partId) {
+            if (!selectedStoryId) return;
+            if (!confirm('حذف هذا الجزء؟')) return;
+            try {
+                await deleteDoc(doc(db, `stories/${selectedStoryId}/parts`, partId));
+            } catch (error) {
+                alert('❌ فشل الحذف: ' + error.message);
+            }
+        };
+
+        // Start listening to stories on load
+        listenStories();
+    </script>
 </body>
 </html>
