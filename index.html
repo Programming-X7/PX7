@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin Dashboard</title>
+    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin & Moderation Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Cairo & Orbitron -->
@@ -29,12 +29,19 @@
     </script>
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #0B0F19; color: #F1F5F9; }
+        .fade-in-up {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen flex flex-col justify-between">
     <div class="max-w-5xl mx-auto w-full">
 
-        <!-- Header Bar -->
+        <!-- Header Bar with Contact Info -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyanNeon/20 pb-5 gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyanNeon to-purpleNeon p-0.5 shadow-lg shadow-cyanNeon/20">
@@ -44,23 +51,31 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
-                        لوحة تحكم القصص <span class="text-xs font-orbitron font-semibold text-cyanNeon bg-cyan-950/60 border border-cyanNeon/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
+                        لوحة تحكم قصص الخيال العلمي <span class="text-xs font-orbitron font-semibold text-cyanNeon bg-cyan-950/60 border border-cyanNeon/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
                     </h1>
-                    <p class="text-xs text-slate-400">منصة نشر وإدارة قصص الخيال العلمي والمزامنة المباشرة مع التطبيق</p>
+                    <p class="text-xs text-slate-400">نظام الإشراف والموافقة على القصص والمزامنة الحية مع تطبيق الهاتف</p>
                 </div>
             </div>
 
-            <div id="connectionStatus" class="text-xs font-semibold bg-emerald-950/80 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/40 flex items-center gap-2">
-                <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span id="statusText">متصل مباشر بـ Firestore</span>
+            <!-- Contact Header Info -->
+            <div class="flex flex-col md:flex-row items-end md:items-center gap-3 text-xs">
+                <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300 flex items-center gap-2">
+                    <span class="text-cyanNeon">✉</span> info.designerweb99@gmail.com
+                </div>
+                <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300 flex items-center gap-2">
+                    <span class="text-emerald-400">📱</span> WhatsApp: 0770-217907
+                </div>
+                <div id="connectionStatus" class="font-semibold bg-emerald-950/80 text-emerald-400 px-3 py-1.5 rounded-xl border border-emerald-500/40 flex items-center gap-2">
+                    <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span id="statusText">متصل مباشر بـ Firestore</span>
+                </div>
             </div>
         </header>
 
-        <!-- Firebase Configuration Card -->
-        <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl relative overflow-hidden backdrop-blur-md">
+        <!-- Configuration Settings Card -->
+        <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-bold text-cyanNeon flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                     إعدادات الاتصال بـ Firebase (Project Configuration)
                 </h2>
                 <button type="button" onclick="resetDefaultConfig()" class="text-xs text-slate-400 hover:text-cyanNeon transition underline">استعادة التكوين الافتراضي</button>
@@ -82,7 +97,7 @@
             </button>
         </div>
 
-        <!-- Add New Story Section -->
+        <!-- Add Story Section with Approval Option -->
         <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl">
             <h2 class="text-lg font-extrabold text-white mb-4 flex items-center gap-2">
                 <span class="text-cyanNeon">✦</span> إضافة قصة جديدة إلى المنصة
@@ -128,6 +143,14 @@
                 <div>
                     <label for="storyDesc" class="block text-xs font-semibold text-slate-300 mb-1">ملخص القصة (Synopsis)</label>
                     <textarea id="storyDesc" rows="3" placeholder="اكتب ملخصاً مشوقاً للقصة..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm"></textarea>
+                </div>
+
+                <!-- Approval Status Option -->
+                <div class="flex items-center gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+                    <input type="checkbox" id="chkAutoApprove" checked class="w-4 h-4 accent-cyanNeon">
+                    <label for="chkAutoApprove" class="text-slate-200 font-semibold cursor-pointer">
+                        موافقة ونشر مباشر فوري للتطبيق (Auto Approve for Mobile App)
+                    </label>
                 </div>
 
                 <button type="button" id="btnPublishStory" onclick="publishNewStory()" class="bg-gradient-to-r from-cyanNeon to-purpleNeon hover:opacity-95 text-slate-950 font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-cyanNeon/20 flex items-center gap-2">
@@ -181,33 +204,48 @@
             </div>
         </div>
 
-        <!-- Live Stories List -->
+        <!-- Moderation & Stories Management Tabs -->
         <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 shadow-xl">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
-                    القصص المنشورة حالياً في Firestore المباشر
-                </h2>
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4 border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <button type="button" id="tabApprovedBtn" onclick="switchTab('approved')" class="bg-cyanNeon/20 text-cyanNeon border border-cyanNeon/50 text-xs font-bold px-4 py-2 rounded-xl transition">
+                        القصص المنشورة في التطبيق
+                    </button>
+                    <button type="button" id="tabPendingBtn" onclick="switchTab('pending')" class="bg-slate-950 text-slate-400 hover:text-amber-400 border border-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2">
+                        بانتظار الموافقة (Moderation)
+                        <span id="pendingBadge" class="bg-amber-500 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden">0</span>
+                    </button>
+                </div>
                 <span id="storiesBadge" class="bg-cyan-950 text-cyanNeon text-xs font-bold px-3 py-1 rounded-full border border-cyanNeon/30">
                     0 قصص
                 </span>
             </div>
 
+            <!-- Stories Stream Container -->
             <div id="storiesContainer" class="space-y-4">
-                <div class="text-center py-10 text-slate-500">
-                    جاري تحميل القصص المباشرة من Firebase...
+                <div class="text-center py-12 text-slate-500 flex flex-col items-center gap-3">
+                    <div class="w-8 h-8 border-2 border-cyanNeon border-t-transparent rounded-full animate-spin"></div>
+                    <span>جاري تحميل القصص المباشرة من Firestore...</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="mt-12 text-center text-xs text-slate-500 py-4 border-t border-slate-800">
-        منصة قصص الخيال العلمي - Web Admin &copy; 2026 | Direct Live Firestore Sync
+    <!-- Footer Copyright -->
+    <footer class="mt-12 text-center text-xs text-slate-500 py-6 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 max-w-5xl mx-auto w-full">
+        <div>
+            © Oussama ZCompany - All rights reserved
+        </div>
+        <div class="flex items-center gap-4 text-[11px] text-slate-400">
+            <span>Email: info.designerweb99@gmail.com</span>
+            <span>WhatsApp: 0770-217907</span>
+        </div>
     </footer>
 
     <!-- Firebase v10 JavaScript SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { initializeFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const DEFAULT_CONFIG = {
@@ -223,6 +261,8 @@
         let db = null;
         let auth = null;
         let selectedStoryId = null;
+        let activeTab = 'approved'; // 'approved' or 'pending'
+        let cachedStories = [];
         let unsubscribeStories = null;
         let unsubscribeParts = null;
 
@@ -299,6 +339,21 @@
             ]);
         }
 
+        window.switchTab = function(tab) {
+            activeTab = tab;
+            const appBtn = document.getElementById('tabApprovedBtn');
+            const pendBtn = document.getElementById('tabPendingBtn');
+
+            if (tab === 'approved') {
+                appBtn.className = "bg-cyanNeon/20 text-cyanNeon border border-cyanNeon/50 text-xs font-bold px-4 py-2 rounded-xl transition";
+                pendBtn.className = "bg-slate-950 text-slate-400 hover:text-amber-400 border border-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2";
+            } else {
+                pendBtn.className = "bg-amber-500/20 text-amber-400 border border-amber-500/50 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2";
+                appBtn.className = "bg-slate-950 text-slate-400 hover:text-cyanNeon border border-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition";
+            }
+            renderStoriesList();
+        };
+
         function listenStories() {
             if (!db) return;
             if (unsubscribeStories) unsubscribeStories();
@@ -313,39 +368,63 @@
                         partsCount = partsSnap.docs.length;
                     } catch (_) {}
 
+                    const data = docSnap.data();
                     stories.push({
                         id: docSnap.id,
                         partsCount: partsCount,
-                        ...docSnap.data()
+                        isApproved: data.isApproved !== false, // default true if omitted
+                        ...data
                     });
                 }
                 stories.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-                renderStories(stories);
+                cachedStories = stories;
+
+                // Update Pending Badge
+                const pendingCount = stories.filter(s => !s.isApproved).length;
+                const pBadge = document.getElementById('pendingBadge');
+                if (pendingCount > 0) {
+                    pBadge.innerText = pendingCount;
+                    pBadge.classList.remove('hidden');
+                } else {
+                    pBadge.classList.add('hidden');
+                }
+
+                renderStoriesList();
             }, (error) => {
                 console.error("Firestore Listen Error:", error);
             });
         }
 
-        function renderStories(stories) {
+        function renderStoriesList() {
             const container = document.getElementById('storiesContainer');
-            document.getElementById('storiesBadge').innerText = `${stories.length} قصص`;
+            const filtered = cachedStories.filter(s => activeTab === 'approved' ? s.isApproved : !s.isApproved);
 
-            if (stories.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-slate-500">لا توجد قصص حالياً في Firestore. أضف قصة جديدة من النموذج بالأعلى!</div>`;
+            document.getElementById('storiesBadge').innerText = `${filtered.length} قصص`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500">لا توجد قصص ${activeTab === 'approved' ? 'منشورة حالياً في التطبيق' : 'بانتظار الموافقة'}.</div>`;
                 return;
             }
 
-            container.innerHTML = stories.map(s => `
-                <div class="bg-slate-950 border border-slate-800 hover:border-cyanNeon/50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition">
+            container.innerHTML = filtered.map((s, index) => `
+                <div class="fade-in-up bg-slate-950 border border-slate-800 hover:border-cyanNeon/50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition" style="animation-delay: ${index * 60}ms">
                     <div class="flex items-center gap-4 w-full md:w-auto">
                         <img src="${s.coverUrl}" alt="Cover" class="w-14 h-18 object-cover rounded-lg border border-slate-700" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80'">
                         <div>
-                            <span class="text-[10px] bg-purple-950 text-cyanNeon font-bold px-2 py-0.5 rounded border border-purpleNeon/40">${s.genre || 'Sci-Fi'}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] bg-purple-950 text-cyanNeon font-bold px-2 py-0.5 rounded border border-purpleNeon/40">${s.genre || 'Sci-Fi'}</span>
+                                ${!s.isApproved ? `<span class="text-[10px] bg-amber-950 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/40">بانتظار الموافقة</span>` : ''}
+                            </div>
                             <h3 class="font-extrabold text-white text-base mt-1">${s.title}</h3>
                             <p class="text-xs text-slate-400">الكاتب: ${s.author} | ${s.partsCount} أجزاء متاحة</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                        ${!s.isApproved ? `
+                            <button type="button" onclick="window.approveStory('${s.id}')" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-2 rounded-xl transition">
+                                ✓ قبول النشر (Approve)
+                            </button>
+                        ` : ''}
                         <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-cyanNeon/20 hover:bg-cyanNeon/30 text-cyanNeon border border-cyanNeon/40 text-xs font-bold px-3 py-2 rounded-xl transition">
                             + أجزاء القصة (Parts)
                         </button>
@@ -357,12 +436,25 @@
             `).join('');
         }
 
+        window.approveStory = async function(storyId) {
+            if (!db) return;
+            try {
+                await updateDoc(doc(db, "stories", storyId), {
+                    isApproved: true
+                });
+                alert('✅ تم قبول نشر القصة بنجاح وتظهر الآن مباشرة في تطبيق الهاتف!');
+            } catch (err) {
+                alert('❌ حدث خطأ أثناء الموافقة: ' + err.message);
+            }
+        };
+
         window.publishNewStory = async function() {
             const title = document.getElementById('storyTitle').value.trim();
             const author = document.getElementById('storyAuthor').value.trim();
             const genre = document.getElementById('storyGenre').value;
             const coverUrl = document.getElementById('storyCover').value.trim() || 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80';
             const description = document.getElementById('storyDesc').value.trim();
+            const autoApprove = document.getElementById('chkAutoApprove').checked;
 
             if (!title || !author || !description) {
                 alert('الرجاء ملء جميع الحقول المطلوبة (العنوان، الكاتب، الملخص)');
@@ -384,12 +476,15 @@
                     description: description,
                     likesCount: 0,
                     viewsCount: 0,
+                    isApproved: autoApprove,
                     createdAt: new Date().toISOString()
                 };
 
                 await withTimeout(addDoc(collection(db, "stories"), newStoryData), 7000);
 
-                alert('✅ تم نشر القصة بنجاح وسوف تظهر الآن في التطبيق في الوقت الفعلي!');
+                alert(autoApprove
+                    ? '✅ تم نشر القصة بنجاح وتظهر الآن في التطبيق فوراً!'
+                    : '⏳ تم إرسال القصة وهي الآن بانتظار الموافقة ف تبويب (Moderation).');
 
                 document.getElementById('storyTitle').value = '';
                 document.getElementById('storyAuthor').value = '';
