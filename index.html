@@ -3,80 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم منصة قصص الخيال العلمي - Web Admin Panel</title>
+    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Cairo & Orbitron -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#0B0F19',
+                        bgCard: '#121826',
+                        cyanNeon: '#00F0FF',
+                        purpleNeon: '#7000FF',
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #090B10; color: #F1F5F9; }
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0B0F19; color: #F1F5F9; }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen flex flex-col justify-between">
     <div class="max-w-5xl mx-auto w-full">
+
         <!-- Header Bar -->
-        <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyan-500/20 pb-5 gap-4">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyanNeon/20 pb-5 gap-4">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-purple-600 p-0.5 shadow-lg shadow-cyan-500/20">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyanNeon to-purpleNeon p-0.5 shadow-lg shadow-cyanNeon/20">
                     <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
-                        📖
+                        🚀
                     </div>
                 </div>
                 <div>
                     <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
-                        لوحة تحكم القصص <span class="text-xs font-orbitron font-semibold text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
+                        لوحة تحكم القصص <span class="text-xs font-orbitron font-semibold text-cyanNeon bg-cyan-950/60 border border-cyanNeon/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
                     </h1>
-                    <p class="text-xs text-slate-400">منصة نشر وإدارة قصص الخيال العلمي والمزامنة الحية مع التطبيق</p>
+                    <p class="text-xs text-slate-400">منصة نشر وإدارة قصص الخيال العلمي والمزامنة المباشرة مع التطبيق</p>
                 </div>
             </div>
 
             <div id="connectionStatus" class="text-xs font-semibold bg-emerald-950/80 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/40 flex items-center gap-2">
                 <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span id="statusText">متصل بـ Firebase Firestore</span>
+                <span id="statusText">متصل مباشر بـ Firestore</span>
             </div>
         </header>
 
-        <!-- Firestore Security Rules Easy Guide Banner -->
-        <div class="bg-gradient-to-r from-amber-950/80 to-slate-900 border border-amber-500/40 rounded-2xl p-5 mb-8 text-amber-200 text-xs shadow-xl">
-            <div class="flex items-center justify-between mb-2">
-                <h3 class="font-bold text-sm text-amber-400 flex items-center gap-2">
-                    🔑 خطوة واحدة بسيطة لضمان النشر المباشر (Firebase Rules)
-                </h3>
-                <button type="button" onclick="copyRules()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1 rounded-lg transition text-xs">
-                    نسخ القواعد بضغطة زر 📋
-                </button>
+        <!-- Firebase Configuration Card -->
+        <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl relative overflow-hidden backdrop-blur-md">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-bold text-cyanNeon flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                    إعدادات الاتصال بـ Firebase (Project Configuration)
+                </h2>
+                <button type="button" onclick="resetDefaultConfig()" class="text-xs text-slate-400 hover:text-cyanNeon transition underline">استعادة التكوين الافتراضي</button>
             </div>
-            <p class="mb-3 text-slate-300">افتراضياً تكون قواعد Firebase مغلقة. لفتح السماح بالنشر المباشر، افتح **Firebase Console -> Firestore Database -> Rules** وانسخ النص التالي ثم اضغط **Publish**:</p>
-            <pre id="rulesCodeText" class="bg-slate-950 p-3 rounded-xl border border-amber-500/30 text-emerald-400 font-mono text-[11px] overflow-x-auto select-all">rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
-    }
-  }
-}</pre>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mb-4">
+                <div>
+                    <label for="cfgApiKey" class="block text-slate-300 font-semibold mb-1">Firebase API Key</label>
+                    <input id="cfgApiKey" type="text" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none font-mono">
+                </div>
+                <div>
+                    <label for="cfgProjectId" class="block text-slate-300 font-semibold mb-1">Firebase Project ID</label>
+                    <input id="cfgProjectId" type="text" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none font-mono">
+                </div>
+            </div>
+
+            <button type="button" onclick="saveAndConnect()" class="w-full bg-gradient-to-r from-cyanNeon to-purpleNeon hover:opacity-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-cyanNeon/20 transition flex items-center justify-center gap-2">
+                حفظ وإعادة الاتصال المباشر (Connect Live)
+            </button>
         </div>
 
         <!-- Add New Story Section -->
-        <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 mb-8 shadow-xl">
+        <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl">
             <h2 class="text-lg font-extrabold text-white mb-4 flex items-center gap-2">
-                <span class="text-cyan-400">✦</span> إضافة قصة جديدة إلى المنصة
+                <span class="text-cyanNeon">✦</span> إضافة قصة جديدة إلى المنصة
             </h2>
 
             <div class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="storyTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان القصة</label>
-                        <input type="text" id="storyTitle" placeholder="مثال: شعاع المجرة" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                        <input type="text" id="storyTitle" placeholder="مثال: شعاع المجرة" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
                     </div>
                     <div>
                         <label for="storyAuthor" class="block text-xs font-semibold text-slate-300 mb-1">اسم الكاتب</label>
-                        <input type="text" id="storyAuthor" placeholder="مثال: د. زياد الفاسي" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                        <input type="text" id="storyAuthor" placeholder="مثال: د. زياد الفاسي" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
                     </div>
                     <div>
                         <label for="storyGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف الرئيسي</label>
-                        <select id="storyGenre" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                        <select id="storyGenre" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
                             <option value="Cyberpunk">Cyberpunk</option>
                             <option value="Time Travel">Time Travel</option>
                             <option value="Space Opera">Space Opera</option>
@@ -86,13 +110,13 @@ service cloud.firestore {
                     </div>
                     <div>
                         <label for="storyCover" class="block text-xs font-semibold text-slate-300 mb-1">رابط صورة الغلاف (Cover Image URL)</label>
-                        <input type="url" id="storyCover" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                        <input type="url" id="storyCover" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
                     </div>
                 </div>
 
                 <!-- Cover Image Presets -->
                 <div>
-                    <span class="block text-[11px] font-semibold text-cyan-400 mb-2">أغلفة جاهزة اختر منها بضغطة زر:</span>
+                    <span class="block text-[11px] font-semibold text-cyanNeon mb-2">أغلفة جاهزة اختر منها بضغطة زر:</span>
                     <div class="flex flex-wrap gap-2 text-xs">
                         <button type="button" onclick="setCover('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Cyberpunk</button>
                         <button type="button" onclick="setCover('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Time Travel</button>
@@ -103,21 +127,21 @@ service cloud.firestore {
 
                 <div>
                     <label for="storyDesc" class="block text-xs font-semibold text-slate-300 mb-1">ملخص القصة (Synopsis)</label>
-                    <textarea id="storyDesc" rows="3" placeholder="اكتب ملخصاً مشوقاً للقصة..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm"></textarea>
+                    <textarea id="storyDesc" rows="3" placeholder="اكتب ملخصاً مشوقاً للقصة..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm"></textarea>
                 </div>
 
-                <button type="button" id="btnPublishStory" onclick="publishNewStory()" class="bg-gradient-to-r from-cyan-400 to-purple-600 hover:opacity-95 text-slate-950 font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+                <button type="button" id="btnPublishStory" onclick="publishNewStory()" class="bg-gradient-to-r from-cyanNeon to-purpleNeon hover:opacity-95 text-slate-950 font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-cyanNeon/20 flex items-center gap-2">
                     <span id="btnPublishText">نشر القصة الآن</span>
                     <span id="btnPublishSpinner" class="hidden animate-spin">⏳</span>
                 </button>
             </div>
         </div>
 
-        <!-- Dynamic Parts Management Section -->
-        <div id="partsSection" class="bg-slate-900 border border-purple-500/50 rounded-2xl p-6 mb-8 shadow-2xl hidden">
-            <div class="flex justify-between items-center mb-4 border-b border-purple-500/30 pb-3">
+        <!-- Dynamic Parts Sub-collection Manager -->
+        <div id="partsSection" class="bg-bgCard border border-purpleNeon/50 rounded-2xl p-6 mb-8 shadow-2xl hidden">
+            <div class="flex justify-between items-center mb-4 border-b border-purpleNeon/30 pb-3">
                 <div>
-                    <span class="text-xs text-cyan-400 font-bold uppercase tracking-wider">Sub-Collection Manager</span>
+                    <span class="text-xs text-cyanNeon font-bold uppercase tracking-wider">Sub-Collection Manager</span>
                     <h3 id="activeStoryTitle" class="text-xl font-extrabold text-white">إدارة أجزاء القصة</h3>
                 </div>
                 <button type="button" onclick="closePartsSection()" class="text-xs text-slate-300 hover:text-white bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl transition">
@@ -130,20 +154,20 @@ service cloud.firestore {
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="partNum" class="block text-xs font-semibold text-slate-300 mb-1">رقم الجزء</label>
-                        <input type="number" id="partNum" min="1" value="1" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                        <input type="number" id="partNum" min="1" value="1" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
                     </div>
                     <div class="md:col-span-2">
                         <label for="partTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان الجزء</label>
-                        <input type="text" id="partTitle" placeholder="مثال: الجزء الأول: الاستيقاظ في الصمت" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm">
+                        <input type="text" id="partTitle" placeholder="مثال: الجزء الأول: الاستيقاظ في الصمت" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
                     </div>
                 </div>
 
                 <div>
                     <label for="partContent" class="block text-xs font-semibold text-slate-300 mb-1">محتوى الجزء (Markdown Text)</label>
-                    <textarea id="partContent" rows="8" placeholder="# عنوان الجزء&#10;&#10;نص الفصل يدعم Markdown بشكل كامل..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none text-sm font-mono"></textarea>
+                    <textarea id="partContent" rows="8" placeholder="# عنوان الجزء&#10;&#10;نص الفصل يدعم Markdown بشكل كامل..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm font-mono"></textarea>
                 </div>
 
-                <button type="button" onclick="publishNewPart()" class="bg-purple-600 hover:bg-purple-500 text-white font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-purple-600/30">
+                <button type="button" onclick="publishNewPart()" class="bg-purpleNeon hover:opacity-90 text-white font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-purpleNeon/30">
                     نشر هذا الجزء المباشر
                 </button>
             </div>
@@ -158,12 +182,12 @@ service cloud.firestore {
         </div>
 
         <!-- Live Stories List -->
-        <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 shadow-xl">
+        <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 shadow-xl">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
                     القصص المنشورة حالياً في Firestore المباشر
                 </h2>
-                <span id="storiesBadge" class="bg-cyan-950 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full border border-cyan-500/30">
+                <span id="storiesBadge" class="bg-cyan-950 text-cyanNeon text-xs font-bold px-3 py-1 rounded-full border border-cyanNeon/30">
                     0 قصص
                 </span>
             </div>
@@ -177,7 +201,7 @@ service cloud.firestore {
     </div>
 
     <footer class="mt-12 text-center text-xs text-slate-500 py-4 border-t border-slate-800">
-        منصة قصص الخيال العلمي - Web Admin &copy; 2026 | Direct LongPolling Active
+        منصة قصص الخيال العلمي - Web Admin &copy; 2026 | Direct Live Firestore Sync
     </footer>
 
     <!-- Firebase v10 JavaScript SDK -->
@@ -186,7 +210,7 @@ service cloud.firestore {
         import { initializeFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        const firebaseConfig = {
+        const DEFAULT_CONFIG = {
             apiKey: "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ",
             authDomain: "com-oussama-myapplicatio-c32d4.firebaseapp.com",
             projectId: "com-oussama-myapplicatio-c32d4",
@@ -195,52 +219,88 @@ service cloud.firestore {
             appId: "1:65318768984:web:b3d9356b827695717b552d"
         };
 
-        const app = initializeApp(firebaseConfig);
-
-        // Force Long-Polling to prevent WebSocket hanging
-        const db = initializeFirestore(app, {
-            experimentalForceLongPolling: true,
-        });
-
-        const auth = getAuth(app);
-
+        let app = null;
+        let db = null;
+        let auth = null;
         let selectedStoryId = null;
         let unsubscribeStories = null;
         let unsubscribeParts = null;
 
-        // Auto authenticate anonymously on startup
-        signInAnonymously(auth).then(() => {
-            console.log("Firebase Anonymous Auth Connected.");
-            const statusText = document.getElementById('statusText');
-            if (statusText) statusText.innerText = "متصل بـ Firebase Firestore";
-        }).catch(err => {
-            console.warn("Auth notice:", err);
+        // Startup: Load config from localStorage or fallback to default
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedApiKey = localStorage.getItem('scifi_api_key') || DEFAULT_CONFIG.apiKey;
+            const savedProjectId = localStorage.getItem('scifi_project_id') || DEFAULT_CONFIG.projectId;
+
+            document.getElementById('cfgApiKey').value = savedApiKey;
+            document.getElementById('cfgProjectId').value = savedProjectId;
+
+            initFirebase(savedApiKey, savedProjectId);
         });
 
-        // Copy rules helper
-        window.copyRules = function() {
-            const rulesText = document.getElementById('rulesCodeText').innerText;
-            navigator.clipboard.writeText(rulesText);
-            alert('📋 تم نسخ قواعد الحماية بنجاح! يلزم إلصاقها في Firebase Console -> Firestore Database -> Rules');
+        window.saveAndConnect = function() {
+            const apiKey = document.getElementById('cfgApiKey').value.trim();
+            const projectId = document.getElementById('cfgProjectId').value.trim();
+
+            if (!apiKey || !projectId) return alert('الرجاء إدخال API Key و Project ID');
+
+            localStorage.setItem('scifi_api_key', apiKey);
+            localStorage.setItem('scifi_project_id', projectId);
+
+            initFirebase(apiKey, projectId);
+            alert('✅ تم حفظ الإعدادات وإعادة الاتصال بـ Firebase!');
         };
 
-        // Helper preset cover function
+        window.resetDefaultConfig = function() {
+            localStorage.removeItem('scifi_api_key');
+            localStorage.removeItem('scifi_project_id');
+            document.getElementById('cfgApiKey').value = DEFAULT_CONFIG.apiKey;
+            document.getElementById('cfgProjectId').value = DEFAULT_CONFIG.projectId;
+            initFirebase(DEFAULT_CONFIG.apiKey, DEFAULT_CONFIG.projectId);
+        };
+
+        function initFirebase(apiKey, projectId) {
+            try {
+                const config = {
+                    apiKey: apiKey,
+                    authDomain: `${projectId}.firebaseapp.com`,
+                    projectId: projectId,
+                    storageBucket: `${projectId}.firebasestorage.app`,
+                    messagingSenderId: "65318768984",
+                    appId: "1:65318768984:web:b3d9356b827695717b552d"
+                };
+
+                app = initializeApp(config);
+                db = initializeFirestore(app, {
+                    experimentalForceLongPolling: true,
+                });
+                auth = getAuth(app);
+
+                signInAnonymously(auth).catch(() => {});
+
+                const statusText = document.getElementById('statusText');
+                if (statusText) statusText.innerText = "متصل مباشر بـ Firestore";
+
+                listenStories();
+            } catch (err) {
+                console.error("Firebase Init Error:", err);
+            }
+        }
+
         window.setCover = function(url) {
             document.getElementById('storyCover').value = url;
         };
 
-        // Promise Timeout Wrapper to guarantee function never hangs
         function withTimeout(promise, ms = 7000) {
             return Promise.race([
                 promise,
                 new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("انتهت مهلة الاتصال بالخادم. تأكد من فتح القواعد (Security Rules) في Firebase Console.")), ms)
+                    setTimeout(() => reject(new Error("انتهت مهلة الاتصال بـ Firestore")), ms)
                 )
             ]);
         }
 
-        // Live Stories Listener
         function listenStories() {
+            if (!db) return;
             if (unsubscribeStories) unsubscribeStories();
 
             const q = query(collection(db, "stories"));
@@ -259,7 +319,6 @@ service cloud.firestore {
                         ...docSnap.data()
                     });
                 }
-                // Sort by date client side
                 stories.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
                 renderStories(stories);
             }, (error) => {
@@ -277,17 +336,17 @@ service cloud.firestore {
             }
 
             container.innerHTML = stories.map(s => `
-                <div class="bg-slate-950 border border-slate-800 hover:border-cyan-500/50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition">
+                <div class="bg-slate-950 border border-slate-800 hover:border-cyanNeon/50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition">
                     <div class="flex items-center gap-4 w-full md:w-auto">
                         <img src="${s.coverUrl}" alt="Cover" class="w-14 h-18 object-cover rounded-lg border border-slate-700" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80'">
                         <div>
-                            <span class="text-[10px] bg-purple-950 text-cyan-400 font-bold px-2 py-0.5 rounded border border-purple-500/40">${s.genre || 'Sci-Fi'}</span>
+                            <span class="text-[10px] bg-purple-950 text-cyanNeon font-bold px-2 py-0.5 rounded border border-purpleNeon/40">${s.genre || 'Sci-Fi'}</span>
                             <h3 class="font-extrabold text-white text-base mt-1">${s.title}</h3>
                             <p class="text-xs text-slate-400">الكاتب: ${s.author} | ${s.partsCount} أجزاء متاحة</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                        <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold px-3 py-2 rounded-xl transition">
+                        <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-cyanNeon/20 hover:bg-cyanNeon/30 text-cyanNeon border border-cyanNeon/40 text-xs font-bold px-3 py-2 rounded-xl transition">
                             + أجزاء القصة (Parts)
                         </button>
                         <button type="button" onclick="window.deleteStory('${s.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-bold px-3 py-2 rounded-xl transition">
@@ -298,7 +357,6 @@ service cloud.firestore {
             `).join('');
         }
 
-        // Fast & Reliable Publish New Story Function
         window.publishNewStory = async function() {
             const title = document.getElementById('storyTitle').value.trim();
             const author = document.getElementById('storyAuthor').value.trim();
@@ -307,7 +365,7 @@ service cloud.firestore {
             const description = document.getElementById('storyDesc').value.trim();
 
             if (!title || !author || !description) {
-                alert('الرجاء ملء حقول القصة المطلوبة (العنوان، الكاتب، والملخص)!');
+                alert('الرجاء ملء جميع الحقول المطلوبة (العنوان، الكاتب، الملخص)');
                 return;
             }
 
@@ -333,7 +391,6 @@ service cloud.firestore {
 
                 alert('✅ تم نشر القصة بنجاح وسوف تظهر الآن في التطبيق في الوقت الفعلي!');
 
-                // Clear Inputs
                 document.getElementById('storyTitle').value = '';
                 document.getElementById('storyAuthor').value = '';
                 document.getElementById('storyCover').value = '';
@@ -341,14 +398,13 @@ service cloud.firestore {
 
             } catch (error) {
                 console.error("Publish Error:", error);
-                alert('❌ تعذر الحفظ: ' + error.message + '\n\nتأكد من إلصاق القواعد (Rules) الظاهرة أعلى الصفحة في Firebase Console.');
+                alert('❌ تعذر الحفظ: ' + error.message);
             } finally {
                 btnText.innerText = "نشر القصة الآن";
                 btnSpinner.classList.add('hidden');
             }
         };
 
-        // Manage Dynamic Sub-collection Parts
         window.manageParts = function(storyId, storyTitle) {
             selectedStoryId = storyId;
             document.getElementById('activeStoryTitle').innerText = `إدارة أجزاء: ${storyTitle}`;
@@ -368,8 +424,6 @@ service cloud.firestore {
             unsubscribeParts = onSnapshot(q, (snapshot) => {
                 const parts = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
                 renderParts(parts);
-            }, (error) => {
-                console.error("Parts listen error:", error);
             });
         }
 
@@ -382,13 +436,12 @@ service cloud.firestore {
 
             container.innerHTML = parts.map(p => `
                 <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
-                    <span class="font-bold text-cyan-400">الجزء ${p.partNumber}: ${p.title}</span>
+                    <span class="font-bold text-cyanNeon">الجزء ${p.partNumber}: ${p.title}</span>
                     <button type="button" onclick="window.deletePart('${p.id}')" class="text-red-400 hover:underline">حذف</button>
                 </div>
             `).join('');
         }
 
-        // Publish Part Fast
         window.publishNewPart = async function() {
             if (!selectedStoryId) return;
 
@@ -420,7 +473,6 @@ service cloud.firestore {
             }
         };
 
-        // Delete Story
         window.deleteStory = async function(storyId) {
             if (!confirm('هل أنت تأكد من حذف هذه القصة بجميع أجزائها؟')) return;
 
@@ -436,7 +488,6 @@ service cloud.firestore {
             }
         };
 
-        // Delete Part
         window.deletePart = async function(partId) {
             if (!selectedStoryId) return;
             if (!confirm('حذف هذا الجزء؟')) return;
@@ -447,7 +498,6 @@ service cloud.firestore {
             }
         };
 
-        // Start listening to stories on load
         listenStories();
     </script>
 </body>
