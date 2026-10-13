@@ -30,23 +30,23 @@
                     <p class="text-xs text-slate-400">منصة نشر وإدارة قصص الخيال العلمي والمزامنة الحية مع التطبيق</p>
                 </div>
             </div>
-
+            
             <div id="connectionStatus" class="text-xs font-semibold bg-emerald-950/80 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/40 flex items-center gap-2">
                 <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span id="statusText">متصل بـ Firebase Firestore</span>
+                <span id="statusText">جاري الاتصال بـ Firebase...</span>
             </div>
         </header>
 
-        <!-- Firestore Rules Guide Warning Box (Hidden by default, shown on permission error) -->
-        <div id="rulesWarningBox" class="hidden bg-amber-950/60 border border-amber-500/50 rounded-2xl p-5 mb-8 text-amber-200 text-xs shadow-xl">
+        <!-- Firestore Security Rules Helper Modal/Banner -->
+        <div id="rulesGuideBox" class="bg-slate-900 border border-amber-500/40 rounded-2xl p-5 mb-8 text-amber-200 text-xs shadow-xl">
             <div class="flex items-center justify-between mb-2">
                 <h3 class="font-bold text-sm text-amber-400 flex items-center gap-2">
-                    ⚠️ تنبيه: قواعد حماية Firestore (Security Rules) تمنع الكتابة!
+                    🔑 تنبيه هام جداً: قواعد حماية Firebase (Security Rules)
                 </h3>
-                <button onclick="document.getElementById('rulesWarningBox').classList.add('hidden')" class="text-amber-400 hover:underline text-xs">إغلاق</button>
+                <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-mono">ضروري للنشر المباشر</span>
             </div>
-            <p class="mb-3">للتأكد من نشر القصص بنجاح، افتح **Firebase Console -> Firestore Database -> Rules** وضع القواعد التالية:</p>
-            <pre class="bg-slate-950 p-3 rounded-xl border border-amber-500/30 text-emerald-400 font-mono text-[11px] overflow-x-auto">rules_version = '2';
+            <p class="mb-2 text-slate-300">إذا ظهرت رسالة خطأ أو تعذر الحفظ، يرجى التأكد من فتح **Firebase Console -> Firestore Database -> Rules** ثم نسخ القواعد التالية ولصقها والتأكد من الضغط على **Publish**:</p>
+            <pre class="bg-slate-950 p-3 rounded-xl border border-amber-500/30 text-emerald-400 font-mono text-[11px] overflow-x-auto select-all">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
@@ -61,7 +61,7 @@ service cloud.firestore {
             <h2 class="text-lg font-extrabold text-white mb-4 flex items-center gap-2">
                 <span class="text-cyan-400">✦</span> إضافة قصة جديدة إلى المنصة
             </h2>
-
+            
             <div class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -175,13 +175,13 @@ service cloud.firestore {
     </div>
 
     <footer class="mt-12 text-center text-xs text-slate-500 py-4 border-t border-slate-800">
-        منصة قصص الخيال العلمي - Web Admin &copy; 2026 | Live Sync Active
+        منصة قصص الخيال العلمي - Web Admin &copy; 2026 | Direct LongPolling Active
     </footer>
 
     <!-- Firebase v10 JavaScript SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -194,7 +194,12 @@ service cloud.firestore {
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+
+        // Force Long-Polling to prevent WebSocket hanging on GitHub Pages / Proxies
+        const db = initializeFirestore(app, {
+            experimentalForceLongPolling: true,
+        });
+
         const auth = getAuth(app);
 
         let selectedStoryId = null;
@@ -204,6 +209,8 @@ service cloud.firestore {
         // Auto authenticate anonymously on startup
         signInAnonymously(auth).then(() => {
             console.log("Firebase Anonymous Auth Connected.");
+            const statusText = document.getElementById('statusText');
+            if (statusText) statusText.innerText = "متصل جاهز بـ Firebase Firestore";
         }).catch(err => {
             console.warn("Auth notice:", err);
         });
@@ -213,11 +220,21 @@ service cloud.firestore {
             document.getElementById('storyCover').value = url;
         };
 
+        // Promise Timeout Wrapper to guarantee function never hangs
+        function withTimeout(promise, ms = 7000) {
+            return Promise.race([
+                promise,
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error("انتهت مهلة الاتصال بالخادم (Timeout)! تأكد من إعداد قواعد حماية Firestore (Security Rules).")), ms)
+                )
+            ]);
+        }
+
         // Live Stories Listener
         function listenStories() {
             if (unsubscribeStories) unsubscribeStories();
 
-            const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
+            const q = query(collection(db, "stories"));
             unsubscribeStories = onSnapshot(q, async (snapshot) => {
                 const stories = [];
                 for (let docSnap of snapshot.docs) {
@@ -233,12 +250,11 @@ service cloud.firestore {
                         ...docSnap.data()
                     });
                 }
+                // Sort by date client side
+                stories.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
                 renderStories(stories);
             }, (error) => {
                 console.error("Firestore Listen Error:", error);
-                if (error.code === 'permission-denied') {
-                    document.getElementById('rulesWarningBox').classList.remove('hidden');
-                }
             });
         }
 
@@ -273,7 +289,7 @@ service cloud.firestore {
             `).join('');
         }
 
-        // Publish New Story Function
+        // Fast & Reliable Publish New Story Function
         window.publishNewStory = async function() {
             const title = document.getElementById('storyTitle').value.trim();
             const author = document.getElementById('storyAuthor').value.trim();
@@ -282,18 +298,18 @@ service cloud.firestore {
             const description = document.getElementById('storyDesc').value.trim();
 
             if (!title || !author || !description) {
-                alert('الرجاء ملء جميع الحقول المطلوبة (العنوان، الكاتب، الملخص)');
+                alert('الرجاء ملء حقول القصة المطلوب (العنوان، الكاتب، والملخص)!');
                 return;
             }
 
             const btnText = document.getElementById('btnPublishText');
             const btnSpinner = document.getElementById('btnPublishSpinner');
 
-            btnText.innerText = "جاري النشر...";
+            btnText.innerText = "جاري النشر المباشر...";
             btnSpinner.classList.remove('hidden');
 
             try {
-                await addDoc(collection(db, "stories"), {
+                const newStoryData = {
                     title: title,
                     author: author,
                     genre: genre,
@@ -301,11 +317,13 @@ service cloud.firestore {
                     description: description,
                     likesCount: 0,
                     viewsCount: 0,
-                    createdAt: serverTimestamp()
-                });
+                    createdAt: new Date().toISOString()
+                };
+
+                await withTimeout(addDoc(collection(db, "stories"), newStoryData), 7000);
 
                 alert('✅ تم نشر القصة بنجاح وسوف تظهر الآن في التطبيق في الوقت الفعلي!');
-
+                
                 // Clear Inputs
                 document.getElementById('storyTitle').value = '';
                 document.getElementById('storyAuthor').value = '';
@@ -314,10 +332,7 @@ service cloud.firestore {
 
             } catch (error) {
                 console.error("Publish Error:", error);
-                alert('❌ حدث خطأ أثناء النشر: ' + error.message);
-                if (error.code === 'permission-denied') {
-                    document.getElementById('rulesWarningBox').classList.remove('hidden');
-                }
+                alert('❌ تعذر الحفظ: ' + error.message + '\n\nيرجى التأكد من إضافة القواعد (Security Rules) في صفحة Firebase Console.');
             } finally {
                 btnText.innerText = "نشر القصة الآن";
                 btnSpinner.classList.add('hidden');
@@ -364,7 +379,7 @@ service cloud.firestore {
             `).join('');
         }
 
-        // Publish Part
+        // Publish Part Fast
         window.publishNewPart = async function() {
             if (!selectedStoryId) return;
 
@@ -378,12 +393,12 @@ service cloud.firestore {
             }
 
             try {
-                await addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
+                await withTimeout(addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
                     partNumber: partNumber,
                     title: title,
                     content: content,
-                    createdAt: serverTimestamp()
-                });
+                    createdAt: new Date().toISOString()
+                }), 7000);
 
                 alert('✅ تم نشر الجزء بنجاح للقصة!');
                 document.getElementById('partTitle').value = '';
