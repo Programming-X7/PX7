@@ -33,7 +33,7 @@
 
             <div id="connectionStatus" class="text-xs font-semibold bg-slate-900 text-amber-400 px-4 py-2 rounded-xl border border-amber-500/30 flex items-center gap-2">
                 <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
-                <span id="statusText">غير متصل بـ Firebase</span>
+                <span id="statusText">جاري الاتصال بـ Firebase...</span>
             </div>
         </header>
 
@@ -51,16 +51,16 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mb-4">
                 <div>
                     <label for="cfgApiKey" class="block text-slate-300 font-semibold mb-1">Firebase API Key</label>
-                    <input id="cfgApiKey" type="text" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none font-mono">
+                    <input id="cfgApiKey" type="text" value="AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none font-mono">
                 </div>
                 <div>
                     <label for="cfgProjectId" class="block text-slate-300 font-semibold mb-1">Firebase Project ID</label>
-                    <input id="cfgProjectId" type="text" placeholder="qisas-khayaliya" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none font-mono">
+                    <input id="cfgProjectId" type="text" value="com-oussama-myapplicatio-c32d4" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyan-400 outline-none font-mono">
                 </div>
             </div>
 
             <button id="btnConnect" class="w-full bg-gradient-to-r from-cyan-400 to-purple-600 hover:opacity-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-cyan-500/20 transition flex items-center justify-center gap-2">
-                حفظ البيانات والاتصال المباشر (Connect & Sync)
+                تأكيد الاتصال المباشر (Connect & Sync)
             </button>
         </div>
 
@@ -163,7 +163,7 @@
 
             <div id="storiesContainer" class="space-y-4">
                 <div class="text-center py-10 text-slate-500">
-                    الرجاء إدخال Firebase Config والضغط على اتصال لعرض القصص المباشرة.
+                    جاري تحميل القصص المباشرة من Firebase Firestore...
                 </div>
             </div>
         </div>
@@ -178,31 +178,32 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        const DEFAULT_API_KEY = "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ";
+        const DEFAULT_PROJECT_ID = "com-oussama-myapplicatio-c32d4";
+
         let db = null;
         let selectedStoryId = null;
         let unsubscribeStories = null;
         let unsubscribeParts = null;
 
-        // Load Saved Configuration from localStorage on startup
+        // Load Saved Configuration from localStorage or fallback to project default on startup
         window.addEventListener('DOMContentLoaded', () => {
-            const savedApiKey = localStorage.getItem('scifi_firebase_api_key');
-            const savedProjectId = localStorage.getItem('scifi_firebase_project_id');
+            const savedApiKey = localStorage.getItem('scifi_firebase_api_key') || DEFAULT_API_KEY;
+            const savedProjectId = localStorage.getItem('scifi_firebase_project_id') || DEFAULT_PROJECT_ID;
 
-            if (savedApiKey) document.getElementById('cfgApiKey').value = savedApiKey;
-            if (savedProjectId) document.getElementById('cfgProjectId').value = savedProjectId;
+            document.getElementById('cfgApiKey').value = savedApiKey;
+            document.getElementById('cfgProjectId').value = savedProjectId;
 
-            if (savedApiKey && savedProjectId) {
-                initFirebase(savedApiKey, savedProjectId);
-            }
+            initFirebase(savedApiKey, savedProjectId);
         });
 
         // Clear Config Button
         document.getElementById('btnClearConfig').addEventListener('click', () => {
             localStorage.removeItem('scifi_firebase_api_key');
             localStorage.removeItem('scifi_firebase_project_id');
-            document.getElementById('cfgApiKey').value = '';
-            document.getElementById('cfgProjectId').value = '';
-            alert('تم مسح البيانات المحفوظة.');
+            document.getElementById('cfgApiKey').value = DEFAULT_API_KEY;
+            document.getElementById('cfgProjectId').value = DEFAULT_PROJECT_ID;
+            initFirebase(DEFAULT_API_KEY, DEFAULT_PROJECT_ID);
         });
 
         // Save & Connect Handler
@@ -223,11 +224,16 @@
 
         function initFirebase(apiKey, projectId) {
             try {
-                const app = initializeApp({
+                const firebaseConfig = {
                     apiKey: apiKey,
                     authDomain: `${projectId}.firebaseapp.com`,
                     projectId: projectId,
-                });
+                    storageBucket: `${projectId}.firebasestorage.app`,
+                    messagingSenderId: "65318768984",
+                    appId: "1:65318768984:web:b3d9356b827695717b552d"
+                };
+
+                const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
 
                 const statusDot = document.getElementById('statusDot');
@@ -261,6 +267,8 @@
                     });
                 }
                 renderStories(stories);
+            }, (error) => {
+                console.error("Firestore Listen Error:", error);
             });
         }
 
@@ -269,7 +277,7 @@
             document.getElementById('storiesBadge').innerText = `${stories.length} قصص`;
 
             if (stories.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-slate-500">لا توجد قصص حالياً f Firestore. أضف قصة جديدة من النموذج!</div>`;
+                container.innerHTML = `<div class="text-center py-8 text-slate-500">لا توجد قصص حالياً في Firestore. أضف قصة جديدة من النموذج بالأعلى!</div>`;
                 return;
             }
 
