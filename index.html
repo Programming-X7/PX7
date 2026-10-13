@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin & Moderation Hub</title>
+    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin & Dynamic Genres Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Cairo & Orbitron -->
@@ -29,9 +29,7 @@
     </script>
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #0B0F19; color: #F1F5F9; }
-        .fade-in-up {
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
+        .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
@@ -53,51 +51,47 @@
                     <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
                         لوحة تحكم قصص الخيال العلمي <span class="text-xs font-orbitron font-semibold text-cyanNeon bg-cyan-950/60 border border-cyanNeon/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
                     </h1>
-                    <p class="text-xs text-slate-400">نظام الإشراف والموافقة والتعديل المباشر الموازي للتطبيق</p>
+                    <p class="text-xs text-slate-400">نظام الإشراف وتصنيفات القصص الديناميكية والمزامنة الحية مع التطبيق</p>
                 </div>
             </div>
 
-            <!-- Contact Header Info with Direct WhatsApp -->
             <div class="flex flex-col md:flex-row items-end md:items-center gap-3 text-xs">
-                <a href="mailto:info.designerweb99@gmail.com" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300 flex items-center gap-2 transition">
+                <a href="mailto:info.designerweb99@gmail.com" class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300">
                     <span class="text-cyanNeon">✉</span> info.designerweb99@gmail.com
                 </a>
-                <a href="https://wa.me/212770217907" target="_blank" class="bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-emerald-400 font-bold flex items-center gap-2 transition">
+                <a href="https://wa.me/212770217907" target="_blank" class="bg-emerald-950/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-emerald-400 font-bold">
                     <span>💬</span> WhatsApp: 0770-217907
                 </a>
-                <div id="connectionStatus" class="font-semibold bg-emerald-950/80 text-emerald-400 px-3 py-1.5 rounded-xl border border-emerald-500/40 flex items-center gap-2">
-                    <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span id="statusText">متصل مباشر بـ Firestore</span>
-                </div>
             </div>
         </header>
 
-        <!-- Configuration Settings Card -->
-        <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-base font-bold text-cyanNeon flex items-center gap-2">
-                    إعدادات الاتصال بـ Firebase (Project Configuration)
+        <!-- Dynamic Genres Management Section -->
+        <div class="bg-bgCard border border-purpleNeon/40 rounded-2xl p-6 mb-8 shadow-xl">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                <h2 class="text-base font-extrabold text-purpleNeon flex items-center gap-2">
+                    🏷️ إدارة التصنيفات الديناميكية (Dynamic Genres)
                 </h2>
-                <button type="button" onclick="resetDefaultConfig()" class="text-xs text-slate-400 hover:text-cyanNeon transition underline">استعادة التكوين الافتراضي</button>
+                <span id="genresCountBadge" class="text-xs bg-purple-950 text-cyanNeon px-3 py-1 rounded-full border border-purpleNeon/30 font-bold">
+                    5 تصنيفات
+                </span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mb-4">
-                <div>
-                    <label for="cfgApiKey" class="block text-slate-300 font-semibold mb-1">Firebase API Key</label>
-                    <input id="cfgApiKey" type="text" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none font-mono">
-                </div>
-                <div>
-                    <label for="cfgProjectId" class="block text-slate-300 font-semibold mb-1">Firebase Project ID</label>
-                    <input id="cfgProjectId" type="text" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none font-mono">
-                </div>
+            <!-- Add Genre Input Row -->
+            <div class="flex items-center gap-3 mb-4">
+                <label for="newGenreInput" class="sr-only">اسم التصنيف الجديد</label>
+                <input type="text" id="newGenreInput" placeholder="أدخل اسم تصنيف جديد (مثال: Dystopia, Mecha...)" class="flex-1 bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
+                <button type="button" onclick="addGenre()" class="bg-purpleNeon hover:opacity-90 text-white font-extrabold px-6 py-3 rounded-xl transition text-xs shadow-lg shadow-purpleNeon/20">
+                    + إضافة تصنيف
+                </button>
             </div>
 
-            <button type="button" onclick="saveAndConnect()" class="w-full bg-gradient-to-r from-cyanNeon to-purpleNeon hover:opacity-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-cyanNeon/20 transition flex items-center justify-center gap-2">
-                حفظ وإعادة الاتصال المباشر (Connect Live)
-            </button>
+            <!-- Genres List Pills -->
+            <div id="genresContainer" class="flex flex-wrap gap-2 text-xs">
+                <span class="text-slate-500">جاري تحميل التصنيفات...</span>
+            </div>
         </div>
 
-        <!-- Add Story Section with Auto Approve Checkbox -->
+        <!-- Add Story Section -->
         <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl">
             <h2 class="text-lg font-extrabold text-white mb-4 flex items-center gap-2">
                 <span class="text-cyanNeon">✦</span> إضافة قصة جديدة إلى المنصة
@@ -114,13 +108,9 @@
                         <input type="text" id="storyAuthor" placeholder="مثال: د. زياد الفاسي" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
                     </div>
                     <div>
-                        <label for="storyGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف الرئيسي</label>
+                        <label for="storyGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف الرئيسي (من القائمة الديناميكية)</label>
                         <select id="storyGenre" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
-                            <option value="Cyberpunk">Cyberpunk</option>
-                            <option value="Time Travel">Time Travel</option>
-                            <option value="Space Opera">Space Opera</option>
-                            <option value="AI & Robots">AI & Robots</option>
-                            <option value="Sci-Fi">Sci-Fi العامة</option>
+                            <!-- Populated dynamically -->
                         </select>
                     </div>
                     <div>
@@ -136,7 +126,6 @@
                         <button type="button" onclick="setCover('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Cyberpunk</button>
                         <button type="button" onclick="setCover('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Time Travel</button>
                         <button type="button" onclick="setCover('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Space Opera</button>
-                        <button type="button" onclick="setCover('https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف AI & Robots</button>
                     </div>
                 </div>
 
@@ -145,11 +134,10 @@
                     <textarea id="storyDesc" rows="3" placeholder="اكتب ملخصاً مشوقاً للقصة..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm"></textarea>
                 </div>
 
-                <!-- Approval Status Option -->
                 <div class="flex items-center gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
                     <input type="checkbox" id="chkAutoApprove" checked class="w-4 h-4 accent-cyanNeon">
                     <label for="chkAutoApprove" class="text-slate-200 font-semibold cursor-pointer">
-                        موافقة ونشر مباشر فوري للتطبيق (Auto Approve for Mobile App)
+                        موافقة ونشر مباشر فوري للتطبيق (Auto Approve)
                     </label>
                 </div>
 
@@ -157,57 +145,6 @@
                     <span id="btnPublishText">نشر القصة الآن</span>
                     <span id="btnPublishSpinner" class="hidden animate-spin">⏳</span>
                 </button>
-            </div>
-        </div>
-
-        <!-- Edit Story Modal (Hidden by default) -->
-        <div id="editStoryModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
-            <div class="bg-bgCard border border-cyanNeon/40 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                    <h3 class="text-lg font-extrabold text-white">تعديل بيانات القصة</h3>
-                    <button type="button" onclick="closeEditModal()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg">إغلاق</button>
-                </div>
-
-                <input type="hidden" id="editStoryId">
-
-                <div>
-                    <label for="editTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان القصة</label>
-                    <input type="text" id="editTitle" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label for="editAuthor" class="block text-xs font-semibold text-slate-300 mb-1">الكاتب</label>
-                        <input type="text" id="editAuthor" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
-                    </div>
-                    <div>
-                        <label for="editGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف</label>
-                        <select id="editGenre" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
-                            <option value="Cyberpunk">Cyberpunk</option>
-                            <option value="Time Travel">Time Travel</option>
-                            <option value="Space Opera">Space Opera</option>
-                            <option value="AI & Robots">AI & Robots</option>
-                            <option value="Sci-Fi">Sci-Fi العامة</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="editCover" class="block text-xs font-semibold text-slate-300 mb-1">رابط الغلاف</label>
-                    <input type="url" id="editCover" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
-                </div>
-
-                <div>
-                    <label for="editDesc" class="block text-xs font-semibold text-slate-300 mb-1">الملخص</label>
-                    <textarea id="editDesc" rows="3" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm"></textarea>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <button type="button" onclick="saveEditedStory()" class="bg-cyanNeon hover:opacity-90 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl transition text-sm">
-                        حفظ التعديلات
-                    </button>
-                    <button type="button" onclick="closeEditModal()" class="text-xs text-slate-400 hover:text-white">إلغاء</button>
-                </div>
             </div>
         </div>
 
@@ -225,15 +162,9 @@
 
             <!-- Form: Add Part -->
             <div class="space-y-4 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label for="partNum" class="block text-xs font-semibold text-slate-300 mb-1">رقم الجزء</label>
-                        <input type="number" id="partNum" min="1" value="1" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label for="partTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان الجزء</label>
-                        <input type="text" id="partTitle" placeholder="مثال: الجزء الأول: الاستيقاظ في الصمت" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
-                    </div>
+                <div>
+                    <label for="partTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان الجزء</label>
+                    <input type="text" id="partTitle" placeholder="مثال: الفصل القادم: المواجهة الحاسمة" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
                 </div>
 
                 <div>
@@ -274,15 +205,14 @@
 
             <!-- Stories Stream Container -->
             <div id="storiesContainer" class="space-y-4">
-                <div class="text-center py-12 text-slate-500 flex flex-col items-center gap-3">
-                    <div class="w-8 h-8 border-2 border-cyanNeon border-t-transparent rounded-full animate-spin"></div>
-                    <span>جاري تحميل القصص المباشرة من Firestore...</span>
+                <div class="text-center py-12 text-slate-500">
+                    جاري تحميل القصص المباشرة من Firestore...
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer Copyright with Direct WhatsApp Link -->
+    <!-- Footer Copyright -->
     <footer class="mt-12 text-center text-xs text-slate-500 py-6 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 max-w-5xl mx-auto w-full">
         <div>
             © Oussama ZCompany - All rights reserved
@@ -298,10 +228,10 @@
     <!-- Firebase v10 JavaScript SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { initializeFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        const DEFAULT_CONFIG = {
+        const config = {
             apiKey: "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ",
             authDomain: "com-oussama-myapplicatio-c32d4.firebaseapp.com",
             projectId: "com-oussama-myapplicatio-c32d4",
@@ -310,108 +240,82 @@
             appId: "1:65318768984:web:b3d9356b827695717b552d"
         };
 
-        let app = null;
-        let db = null;
-        let auth = null;
-        let selectedStoryId = null;
+        const app = initializeApp(config);
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+        const auth = getAuth(app);
+
         let activeTab = 'approved';
         let cachedStories = [];
-        let unsubscribeStories = null;
-        let unsubscribeParts = null;
+        let cachedGenres = ['Cyberpunk', 'Time Travel', 'Space Opera', 'AI & Robots', 'Sci-Fi'];
+        let selectedStoryId = null;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedApiKey = localStorage.getItem('scifi_api_key') || DEFAULT_CONFIG.apiKey;
-            const savedProjectId = localStorage.getItem('scifi_project_id') || DEFAULT_CONFIG.projectId;
+        signInAnonymously(auth).catch(() => {});
 
-            document.getElementById('cfgApiKey').value = savedApiKey;
-            document.getElementById('cfgProjectId').value = savedProjectId;
+        // Listen to Dynamic Genres
+        function listenGenres() {
+            const q = query(collection(db, "genres"));
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.docs.length > 0) {
+                    cachedGenres = snapshot.docs.map(docSnap => docSnap.data().name || docSnap.id);
+                }
+                renderGenres();
+            }, () => {
+                renderGenres();
+            });
+        }
 
-            initFirebase(savedApiKey, savedProjectId);
-        });
+        function renderGenres() {
+            const container = document.getElementById('genresContainer');
+            const select = document.getElementById('storyGenre');
+            document.getElementById('genresCountBadge').innerText = `${cachedGenres.length} تصنيفات`;
 
-        window.saveAndConnect = function() {
-            const apiKey = document.getElementById('cfgApiKey').value.trim();
-            const projectId = document.getElementById('cfgProjectId').value.trim();
+            container.innerHTML = cachedGenres.map(g => `
+                <span class="bg-slate-950 text-cyanNeon border border-purpleNeon/40 px-3 py-1 rounded-xl flex items-center gap-2">
+                    ${g}
+                    <button type="button" onclick="window.deleteGenre('${g}')" class="text-red-400 hover:text-red-300 font-bold">×</button>
+                </span>
+            `).join('');
 
-            if (!apiKey || !projectId) return alert('الرجاء إدخال API Key و Project ID');
+            select.innerHTML = cachedGenres.map(g => `<option value="${g}">${g}</option>`).join('');
+        }
 
-            localStorage.setItem('scifi_api_key', apiKey);
-            localStorage.setItem('scifi_project_id', projectId);
+        window.addGenre = async function() {
+            const input = document.getElementById('newGenreInput');
+            const name = input.value.trim();
+            if (!name) return;
 
-            initFirebase(apiKey, projectId);
-            alert('✅ تم حفظ الإعدادات وإعادة الاتصال بـ Firebase!');
-        };
-
-        window.resetDefaultConfig = function() {
-            localStorage.removeItem('scifi_api_key');
-            localStorage.removeItem('scifi_project_id');
-            document.getElementById('cfgApiKey').value = DEFAULT_CONFIG.apiKey;
-            document.getElementById('cfgProjectId').value = DEFAULT_CONFIG.projectId;
-            initFirebase(DEFAULT_CONFIG.apiKey, DEFAULT_CONFIG.projectId);
-        };
-
-        function initFirebase(apiKey, projectId) {
             try {
-                const config = {
-                    apiKey: apiKey,
-                    authDomain: `${projectId}.firebaseapp.com`,
-                    projectId: projectId,
-                    storageBucket: `${projectId}.firebasestorage.app`,
-                    messagingSenderId: "65318768984",
-                    appId: "1:65318768984:web:b3d9356b827695717b552d"
-                };
-
-                app = initializeApp(config);
-                db = initializeFirestore(app, {
-                    experimentalForceLongPolling: true,
-                });
-                auth = getAuth(app);
-
-                signInAnonymously(auth).catch(() => {});
-
-                const statusText = document.getElementById('statusText');
-                if (statusText) statusText.innerText = "متصل مباشر بـ Firestore";
-
-                listenStories();
-            } catch (err) {
-                console.error("Firebase Init Error:", err);
+                await addDoc(collection(db, "genres"), { name: name });
+                input.value = '';
+            } catch (_) {
+                if (!cachedGenres.includes(name)) {
+                    cachedGenres.push(name);
+                    renderGenres();
+                }
             }
-        }
-
-        window.setCover = function(url) {
-            document.getElementById('storyCover').value = url;
         };
 
-        function withTimeout(promise, ms = 7000) {
-            return Promise.race([
-                promise,
-                new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("انتهت مهلة الاتصال بـ Firestore")), ms)
-                )
-            ]);
-        }
+        window.deleteGenre = async function(genreName) {
+            try {
+                const snap = await getDocs(collection(db, "genres"));
+                for (let docSnap of snap.docs) {
+                    if (docSnap.data().name === genreName || docSnap.id === genreName) {
+                        await deleteDoc(docSnap.ref);
+                    }
+                }
+            } catch (_) {}
+            cachedGenres = cachedGenres.filter(g => g !== genreName);
+            renderGenres();
+        };
 
         window.switchTab = function(tab) {
             activeTab = tab;
-            const appBtn = document.getElementById('tabApprovedBtn');
-            const pendBtn = document.getElementById('tabPendingBtn');
-
-            if (tab === 'approved') {
-                appBtn.className = "bg-cyanNeon/20 text-cyanNeon border border-cyanNeon/50 text-xs font-bold px-4 py-2 rounded-xl transition";
-                pendBtn.className = "bg-slate-950 text-slate-400 hover:text-amber-400 border border-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2";
-            } else {
-                pendBtn.className = "bg-amber-500/20 text-amber-400 border border-amber-500/50 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2";
-                appBtn.className = "bg-slate-950 text-slate-400 hover:text-cyanNeon border border-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition";
-            }
             renderStoriesList();
         };
 
         function listenStories() {
-            if (!db) return;
-            if (unsubscribeStories) unsubscribeStories();
-
             const q = query(collection(db, "stories"));
-            unsubscribeStories = onSnapshot(q, async (snapshot) => {
+            onSnapshot(q, async (snapshot) => {
                 const stories = [];
                 for (let docSnap of snapshot.docs) {
                     let partsCount = 0;
@@ -430,19 +334,7 @@
                 }
                 stories.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
                 cachedStories = stories;
-
-                const pendingCount = stories.filter(s => !s.isApproved).length;
-                const pBadge = document.getElementById('pendingBadge');
-                if (pendingCount > 0) {
-                    pBadge.innerText = pendingCount;
-                    pBadge.classList.remove('hidden');
-                } else {
-                    pBadge.classList.add('hidden');
-                }
-
                 renderStoriesList();
-            }, (error) => {
-                console.error("Firestore Listen Error:", error);
             });
         }
 
@@ -453,7 +345,7 @@
             document.getElementById('storiesBadge').innerText = `${filtered.length} قصص`;
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-slate-500">لا توجد قصص ${activeTab === 'approved' ? 'منشورة حالياً في التطبيق' : 'بانتظار الموافقة'}.</div>`;
+                container.innerHTML = `<div class="text-center py-12 text-slate-500">لا توجد قصص ${activeTab === 'approved' ? 'منشورة حالياً' : 'بانتظار الموافقة'}.</div>`;
                 return;
             }
 
@@ -462,10 +354,7 @@
                     <div class="flex items-center gap-4 w-full md:w-auto">
                         <img src="${s.coverUrl}" alt="Cover" class="w-14 h-18 object-cover rounded-lg border border-slate-700" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80'">
                         <div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] bg-purple-950 text-cyanNeon font-bold px-2 py-0.5 rounded border border-purpleNeon/40">${s.genre || 'Sci-Fi'}</span>
-                                ${!s.isApproved ? `<span class="text-[10px] bg-amber-950 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/40">بانتظار الموافقة</span>` : ''}
-                            </div>
+                            <span class="text-[10px] bg-purple-950 text-cyanNeon font-bold px-2 py-0.5 rounded border border-purpleNeon/40">${s.genre || 'Sci-Fi'}</span>
                             <h3 class="font-extrabold text-white text-base mt-1">${s.title}</h3>
                             <p class="text-xs text-slate-400">الكاتب: ${s.author} | ${s.partsCount} أجزاء متاحة</p>
                         </div>
@@ -473,12 +362,9 @@
                     <div class="flex items-center gap-2 w-full md:w-auto justify-end">
                         ${!s.isApproved ? `
                             <button type="button" onclick="window.approveStory('${s.id}')" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-2 rounded-xl transition">
-                                ✓ قبول النشر (Approve)
+                                ✓ قبول ونشر (Approve)
                             </button>
                         ` : ''}
-                        <button type="button" onclick="window.openEditModal('${s.id}')" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition">
-                            ✏ تعديل
-                        </button>
                         <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-cyanNeon/20 hover:bg-cyanNeon/30 text-cyanNeon border border-cyanNeon/40 text-xs font-bold px-3 py-2 rounded-xl transition">
                             + أجزاء القصة (Parts)
                         </button>
@@ -490,55 +376,6 @@
             `).join('');
         }
 
-        window.openEditModal = function(storyId) {
-            const story = cachedStories.find(s => s.id === storyId);
-            if (!story) return;
-
-            document.getElementById('editStoryId').value = story.id;
-            document.getElementById('editTitle').value = story.title || '';
-            document.getElementById('editAuthor').value = story.author || '';
-            document.getElementById('editGenre').value = story.genre || 'Sci-Fi';
-            document.getElementById('editCover').value = story.coverUrl || '';
-            document.getElementById('editDesc').value = story.description || '';
-
-            document.getElementById('editStoryModal').classList.remove('hidden');
-        };
-
-        window.closeEditModal = function() {
-            document.getElementById('editStoryModal').classList.add('hidden');
-        };
-
-        window.saveEditedStory = async function() {
-            const id = document.getElementById('editStoryId').value;
-            if (!id || !db) return;
-
-            try {
-                await updateDoc(doc(db, "stories", id), {
-                    title: document.getElementById('editTitle').value.trim(),
-                    author: document.getElementById('editAuthor').value.trim(),
-                    genre: document.getElementById('editGenre').value,
-                    coverUrl: document.getElementById('editCover').value.trim(),
-                    description: document.getElementById('editDesc').value.trim(),
-                });
-                alert('✅ تم حفظ التعديلات بنجاح!');
-                closeEditModal();
-            } catch (err) {
-                alert('❌ فشل حفظ التعديلات: ' + err.message);
-            }
-        };
-
-        window.approveStory = async function(storyId) {
-            if (!db) return;
-            try {
-                await updateDoc(doc(db, "stories", storyId), {
-                    isApproved: true
-                });
-                alert('✅ تم قبول نشر القصة بنجاح وتظهر الآن مباشرة في تطبيق الهاتف!');
-            } catch (err) {
-                alert('❌ حدث خطأ أثناء الموافقة: ' + err.message);
-            }
-        };
-
         window.publishNewStory = async function() {
             const title = document.getElementById('storyTitle').value.trim();
             const author = document.getElementById('storyAuthor').value.trim();
@@ -547,47 +384,20 @@
             const description = document.getElementById('storyDesc').value.trim();
             const autoApprove = document.getElementById('chkAutoApprove').checked;
 
-            if (!title || !author || !description) {
-                alert('الرجاء ملء جميع الحقول المطلوبة (العنوان، الكاتب، الملخص)');
-                return;
-            }
-
-            const btnText = document.getElementById('btnPublishText');
-            const btnSpinner = document.getElementById('btnPublishSpinner');
-
-            btnText.innerText = "جاري النشر المباشر...";
-            btnSpinner.classList.remove('hidden');
+            if (!title || !author || !description) return alert('الرجاء ملء جميع الحقول المطلوبة');
 
             try {
-                const newStoryData = {
-                    title: title,
-                    author: author,
-                    genre: genre,
-                    coverUrl: coverUrl,
-                    description: description,
-                    likesCount: 0,
-                    viewsCount: 0,
-                    isApproved: autoApprove,
+                await addDoc(collection(db, "stories"), {
+                    title, author, genre, coverUrl, description,
+                    likesCount: 0, viewsCount: 0, isApproved: autoApprove,
                     createdAt: new Date().toISOString()
-                };
-
-                await withTimeout(addDoc(collection(db, "stories"), newStoryData), 7000);
-
-                alert(autoApprove
-                    ? '✅ تم نشر القصة بنجاح وتظهر الآن في التطبيق فوراً!'
-                    : '⏳ تم إرسال القصة وهي الآن بانتظار الموافقة ف تبويب (Moderation).');
-
+                });
+                alert('✅ تم نشر القصة بنجاح!');
                 document.getElementById('storyTitle').value = '';
                 document.getElementById('storyAuthor').value = '';
-                document.getElementById('storyCover').value = '';
                 document.getElementById('storyDesc').value = '';
-
-            } catch (error) {
-                console.error("Publish Error:", error);
-                alert('❌ تعذر الحفظ: ' + error.message);
-            } finally {
-                btnText.innerText = "نشر القصة الآن";
-                btnSpinner.classList.add('hidden');
+            } catch (err) {
+                alert('❌ تعذر الحفظ: ' + err.message);
             }
         };
 
@@ -600,15 +410,13 @@
 
         window.closePartsSection = function() {
             document.getElementById('partsSection').classList.add('hidden');
-            if (unsubscribeParts) unsubscribeParts();
         };
 
         function listenParts(storyId) {
-            if (unsubscribeParts) unsubscribeParts();
-
-            const q = query(collection(db, `stories/${storyId}/parts`), orderBy("partNumber", "asc"));
-            unsubscribeParts = onSnapshot(q, (snapshot) => {
+            const q = query(collection(db, `stories/${storyId}/parts`));
+            onSnapshot(q, (snapshot) => {
                 const parts = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+                parts.sort((a, b) => (a.partNumber || 1) - (b.partNumber || 1));
                 renderParts(parts);
             });
         }
@@ -616,14 +424,17 @@
         function renderParts(parts) {
             const container = document.getElementById('partsContainer');
             if (parts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500">لا توجد أجزاء منشورة لهذه القصة بعد.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500">لا توجد أجزاء لهذه القصة بعد.</p>`;
                 return;
             }
 
             container.innerHTML = parts.map(p => `
                 <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
-                    <span class="font-bold text-cyanNeon">الجزء ${p.partNumber}: ${p.title}</span>
-                    <button type="button" onclick="window.deletePart('${p.id}')" class="text-red-400 hover:underline">حذف</button>
+                    <span class="font-bold text-cyanNeon">الجزء ${p.partNumber || 1}: ${p.title} ${p.isApproved === false ? '<span class="text-amber-400 font-normal">(بانتظار الموافقة)</span>' : ''}</span>
+                    <div class="flex items-center gap-2">
+                        ${p.isApproved === false ? `<button type="button" onclick="window.approvePart('${p.id}')" class="text-emerald-400 font-bold hover:underline">✓ قبول الجزء</button>` : ''}
+                        <button type="button" onclick="window.deletePart('${p.id}')" class="text-red-400 hover:underline">حذف</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -631,59 +442,69 @@
         window.publishNewPart = async function() {
             if (!selectedStoryId) return;
 
-            const partNumber = parseInt(document.getElementById('partNum').value) || 1;
             const title = document.getElementById('partTitle').value.trim();
             const content = document.getElementById('partContent').value.trim();
 
-            if (!title || !content) {
-                alert('الرجاء إدخال عنوان ومحتوى الجزء!');
-                return;
-            }
+            if (!title || !content) return alert('الرجاء إدخال عنوان ومحتوى الجزء!');
 
             try {
-                await withTimeout(addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
-                    partNumber: partNumber,
+                const partsSnap = await getDocs(collection(db, `stories/${selectedStoryId}/parts`));
+                const nextNum = partsSnap.docs.length + 1;
+
+                await addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
+                    partNumber: nextNum,
                     title: title,
                     content: content,
+                    isApproved: true,
                     createdAt: new Date().toISOString()
-                }), 7000);
+                });
 
-                alert('✅ تم نشر الجزء بنجاح للقصة!');
+                alert(`✅ تم نشر الجزء ${nextNum} بنجاح للقصة!`);
                 document.getElementById('partTitle').value = '';
                 document.getElementById('partContent').value = '';
-                document.getElementById('partNum').value = partNumber + 1;
+            } catch (err) {
+                alert('❌ خطأ في النشر: ' + err.message);
+            }
+        };
 
-            } catch (error) {
-                console.error("Part publish error:", error);
-                alert('❌ حدث خطأ أثناء نشر الجزء: ' + error.message);
+        window.approvePart = async function(partId) {
+            if (!selectedStoryId) return;
+            try {
+                await updateDoc(doc(db, `stories/${selectedStoryId}/parts`, partId), { isApproved: true });
+                alert('✅ تم قبول ونشر الجزء بنجاح!');
+            } catch (err) {
+                alert('❌ خطأ: ' + err.message);
+            }
+        };
+
+        window.approveStory = async function(storyId) {
+            try {
+                await updateDoc(doc(db, "stories", storyId), { isApproved: true });
+                alert('✅ تم قبول نشر القصة بنجاح!');
+            } catch (err) {
+                alert('❌ خطأ: ' + err.message);
             }
         };
 
         window.deleteStory = async function(storyId) {
-            if (!confirm('هل أنت تأكد من حذف هذه القصة بجميع أجزائها؟')) return;
-
+            if (!confirm('حذف هذه القصة؟')) return;
             try {
-                const partsSnap = await getDocs(collection(db, `stories/${storyId}/parts`));
-                for (let p of partsSnap.docs) {
-                    await deleteDoc(p.ref);
-                }
                 await deleteDoc(doc(db, "stories", storyId));
-                alert('✅ تمت عملية حذف القصة بنجاح.');
-            } catch (error) {
-                alert('❌ فشل الحذف: ' + error.message);
+            } catch (err) {
+                alert('❌ فشل الحذف: ' + err.message);
             }
         };
 
         window.deletePart = async function(partId) {
             if (!selectedStoryId) return;
-            if (!confirm('حذف هذا الجزء؟')) return;
             try {
                 await deleteDoc(doc(db, `stories/${selectedStoryId}/parts`, partId));
-            } catch (error) {
-                alert('❌ فشل الحذف: ' + error.message);
+            } catch (err) {
+                alert('❌ فشل الحذف: ' + err.message);
             }
         };
 
+        listenGenres();
         listenStories();
     </script>
 </body>
