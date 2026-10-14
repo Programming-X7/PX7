@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin & Dynamic Genres Hub</title>
+    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin & Review Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Cairo & Orbitron -->
@@ -51,7 +51,7 @@
                     <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
                         لوحة تحكم قصص الخيال العلمي <span class="text-xs font-orbitron font-semibold text-cyanNeon bg-cyan-950/60 border border-cyanNeon/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
                     </h1>
-                    <p class="text-xs text-slate-400">نظام الإشراف وتصنيفات القصص الديناميكية والمزامنة الحية مع التطبيق</p>
+                    <p class="text-xs text-slate-400">نظام الإشراف والتصنيفات والتدقيق المباشر الموازي للتطبيق</p>
                 </div>
             </div>
 
@@ -65,6 +65,55 @@
             </div>
         </header>
 
+        <!-- Confirmation Modal -->
+        <div id="confirmModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-bgCard border border-amber-500/50 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                <div class="flex items-center gap-3 text-amber-400">
+                    <span class="text-2xl">⚠️</span>
+                    <h3 class="text-base font-extrabold">تأكيد الإجراء</h3>
+                </div>
+                <p id="confirmModalMessage" class="text-sm text-slate-200 leading-relaxed">
+                    هل أنت متأكد من رغبتك في حذف/تعديل هذا التصنيف؟
+                </p>
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" id="confirmModalBtnCancel" onclick="closeConfirmModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                        إلغاء
+                    </button>
+                    <button type="button" id="confirmModalBtnAction" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold px-5 py-2.5 rounded-xl transition">
+                        تأكيد
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Moderation Review Reader Modal -->
+        <div id="reviewReaderModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-bgCard border border-cyanNeon/40 rounded-2xl p-6 max-w-2xl w-full shadow-2xl space-y-4 max-h-[85vh] flex flex-col justify-between">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <div>
+                        <span id="reviewModalSubtitle" class="text-xs text-cyanNeon font-bold uppercase">معاينة النص وقراءته قبل القبول</span>
+                        <h3 id="reviewModalTitle" class="text-lg font-extrabold text-white">عنوان القصة/الفصل</h3>
+                    </div>
+                    <button type="button" onclick="closeReviewModal()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg">إغلاق</button>
+                </div>
+
+                <!-- Reader Text Body with High-Contrast Typography -->
+                <div id="reviewModalBody" class="overflow-y-auto p-4 bg-slate-950 rounded-xl border border-slate-800 text-slate-200 text-sm leading-relaxed space-y-3 font-cairo my-2">
+                    <!-- Text renders dynamically -->
+                </div>
+
+                <!-- Actions Footer -->
+                <div class="flex items-center justify-between border-t border-slate-800 pt-3">
+                    <button type="button" id="btnRejectModal" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/40 text-xs font-bold px-5 py-2.5 rounded-xl transition">
+                        ✕ رفض وحذف
+                    </button>
+                    <button type="button" id="btnApproveModal" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-6 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20">
+                        ✓ قبول ونشر للمستخدمين
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Dynamic Genres Management Section -->
         <div class="bg-bgCard border border-purpleNeon/40 rounded-2xl p-6 mb-8 shadow-xl">
             <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
@@ -76,7 +125,6 @@
                 </span>
             </div>
 
-            <!-- Add Genre Input Row -->
             <div class="flex items-center gap-3 mb-4">
                 <label for="newGenreInput" class="sr-only">اسم التصنيف الجديد</label>
                 <input type="text" id="newGenreInput" placeholder="أدخل اسم تصنيف جديد (مثال: Dystopia, Mecha...)" class="flex-1 bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
@@ -85,104 +133,8 @@
                 </button>
             </div>
 
-            <!-- Genres List Pills -->
             <div id="genresContainer" class="flex flex-wrap gap-2 text-xs">
                 <span class="text-slate-500">جاري تحميل التصنيفات...</span>
-            </div>
-        </div>
-
-        <!-- Add Story Section -->
-        <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 mb-8 shadow-xl">
-            <h2 class="text-lg font-extrabold text-white mb-4 flex items-center gap-2">
-                <span class="text-cyanNeon">✦</span> إضافة قصة جديدة إلى المنصة
-            </h2>
-
-            <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="storyTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان القصة</label>
-                        <input type="text" id="storyTitle" placeholder="مثال: شعاع المجرة" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
-                    </div>
-                    <div>
-                        <label for="storyAuthor" class="block text-xs font-semibold text-slate-300 mb-1">اسم الكاتب</label>
-                        <input type="text" id="storyAuthor" placeholder="مثال: د. زياد الفاسي" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
-                    </div>
-                    <div>
-                        <label for="storyGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف الرئيسي (من القائمة الديناميكية)</label>
-                        <select id="storyGenre" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-                    <div>
-                        <label for="storyCover" class="block text-xs font-semibold text-slate-300 mb-1">رابط صورة الغلاف (Cover Image URL)</label>
-                        <input type="url" id="storyCover" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
-                    </div>
-                </div>
-
-                <!-- Cover Image Presets -->
-                <div>
-                    <span class="block text-[11px] font-semibold text-cyanNeon mb-2">أغلفة جاهزة اختر منها بضغطة زر:</span>
-                    <div class="flex flex-wrap gap-2 text-xs">
-                        <button type="button" onclick="setCover('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Cyberpunk</button>
-                        <button type="button" onclick="setCover('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Time Travel</button>
-                        <button type="button" onclick="setCover('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80')" class="bg-slate-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">غلاف Space Opera</button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="storyDesc" class="block text-xs font-semibold text-slate-300 mb-1">ملخص القصة (Synopsis)</label>
-                    <textarea id="storyDesc" rows="3" placeholder="اكتب ملخصاً مشوقاً للقصة..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm"></textarea>
-                </div>
-
-                <div class="flex items-center gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
-                    <input type="checkbox" id="chkAutoApprove" checked class="w-4 h-4 accent-cyanNeon">
-                    <label for="chkAutoApprove" class="text-slate-200 font-semibold cursor-pointer">
-                        موافقة ونشر مباشر فوري للتطبيق (Auto Approve)
-                    </label>
-                </div>
-
-                <button type="button" id="btnPublishStory" onclick="publishNewStory()" class="bg-gradient-to-r from-cyanNeon to-purpleNeon hover:opacity-95 text-slate-950 font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-cyanNeon/20 flex items-center gap-2">
-                    <span id="btnPublishText">نشر القصة الآن</span>
-                    <span id="btnPublishSpinner" class="hidden animate-spin">⏳</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Dynamic Parts Sub-collection Manager -->
-        <div id="partsSection" class="bg-bgCard border border-purpleNeon/50 rounded-2xl p-6 mb-8 shadow-2xl hidden">
-            <div class="flex justify-between items-center mb-4 border-b border-purpleNeon/30 pb-3">
-                <div>
-                    <span class="text-xs text-cyanNeon font-bold uppercase tracking-wider">Sub-Collection Manager</span>
-                    <h3 id="activeStoryTitle" class="text-xl font-extrabold text-white">إدارة أجزاء القصة</h3>
-                </div>
-                <button type="button" onclick="closePartsSection()" class="text-xs text-slate-300 hover:text-white bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl transition">
-                    إغلاق
-                </button>
-            </div>
-
-            <!-- Form: Add Part -->
-            <div class="space-y-4 mb-6">
-                <div>
-                    <label for="partTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان الجزء</label>
-                    <input type="text" id="partTitle" placeholder="مثال: الفصل القادم: المواجهة الحاسمة" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm">
-                </div>
-
-                <div>
-                    <label for="partContent" class="block text-xs font-semibold text-slate-300 mb-1">محتوى الجزء (Markdown Text)</label>
-                    <textarea id="partContent" rows="8" placeholder="# عنوان الجزء&#10;&#10;نص الفصل يدعم Markdown بشكل كامل..." class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white focus:border-cyanNeon outline-none text-sm font-mono"></textarea>
-                </div>
-
-                <button type="button" onclick="publishNewPart()" class="bg-purpleNeon hover:opacity-90 text-white font-extrabold px-8 py-3 rounded-xl transition shadow-lg shadow-purpleNeon/30">
-                    نشر هذا الجزء المباشر
-                </button>
-            </div>
-
-            <!-- Parts List for Selected Story -->
-            <div class="border-t border-slate-800 pt-4">
-                <h4 class="text-xs font-bold text-slate-400 mb-3">الأجزاء المنشورة لهذه القصة:</h4>
-                <div id="partsContainer" class="space-y-2">
-                    <!-- Dynamic parts load here -->
-                </div>
             </div>
         </div>
 
@@ -247,11 +199,50 @@
         let activeTab = 'approved';
         let cachedStories = [];
         let cachedGenres = ['Cyberpunk', 'Time Travel', 'Space Opera', 'AI & Robots', 'Sci-Fi'];
-        let selectedStoryId = null;
 
         signInAnonymously(auth).catch(() => {});
 
-        // Listen to Dynamic Genres
+        // Confirmation Modal Logic
+        window.showConfirmModal = function(msg, onConfirm) {
+            document.getElementById('confirmModalMessage').innerText = msg;
+            const actionBtn = document.getElementById('confirmModalBtnAction');
+            actionBtn.onclick = () => {
+                closeConfirmModal();
+                onConfirm();
+            };
+            document.getElementById('confirmModal').classList.remove('hidden');
+        };
+
+        window.closeConfirmModal = function() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        };
+
+        // Open Reader Modal for Moderation Review
+        window.openReviewModal = function(title, subtitle, content, onApprove, onReject) {
+            document.getElementById('reviewModalTitle').innerText = title;
+            document.getElementById('reviewModalSubtitle').innerText = subtitle;
+            document.getElementById('reviewModalBody').innerText = content || 'لا يوجد نص توضيحي مدخل...';
+
+            const approveBtn = document.getElementById('btnApproveModal');
+            const rejectBtn = document.getElementById('btnRejectModal');
+
+            approveBtn.onclick = () => {
+                closeReviewModal();
+                onApprove();
+            };
+            rejectBtn.onclick = () => {
+                closeReviewModal();
+                onReject();
+            };
+
+            document.getElementById('reviewReaderModal').classList.remove('hidden');
+        };
+
+        window.closeReviewModal = function() {
+            document.getElementById('reviewReaderModal').classList.add('hidden');
+        };
+
+        // Dynamic Genre Management
         function listenGenres() {
             const q = query(collection(db, "genres"));
             onSnapshot(q, (snapshot) => {
@@ -266,17 +257,14 @@
 
         function renderGenres() {
             const container = document.getElementById('genresContainer');
-            const select = document.getElementById('storyGenre');
             document.getElementById('genresCountBadge').innerText = `${cachedGenres.length} تصنيفات`;
 
             container.innerHTML = cachedGenres.map(g => `
                 <span class="bg-slate-950 text-cyanNeon border border-purpleNeon/40 px-3 py-1 rounded-xl flex items-center gap-2">
                     ${g}
-                    <button type="button" onclick="window.deleteGenre('${g}')" class="text-red-400 hover:text-red-300 font-bold">×</button>
+                    <button type="button" onclick="window.promptDeleteGenre('${g}')" class="text-red-400 hover:text-red-300 font-bold">×</button>
                 </span>
             `).join('');
-
-            select.innerHTML = cachedGenres.map(g => `<option value="${g}">${g}</option>`).join('');
         }
 
         window.addGenre = async function() {
@@ -295,7 +283,14 @@
             }
         };
 
-        window.deleteGenre = async function(genreName) {
+        window.promptDeleteGenre = function(genreName) {
+            showConfirmModal(
+                `هل أنت متأكد من رغبتك في حذف/تعديل هذا التصنيف (${genreName})؟`,
+                () => executeDeleteGenre(genreName)
+            );
+        };
+
+        async function executeDeleteGenre(genreName) {
             try {
                 const snap = await getDocs(collection(db, "genres"));
                 for (let docSnap of snap.docs) {
@@ -306,7 +301,7 @@
             } catch (_) {}
             cachedGenres = cachedGenres.filter(g => g !== genreName);
             renderGenres();
-        };
+        }
 
         window.switchTab = function(tab) {
             activeTab = tab;
@@ -360,14 +355,14 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                        <button type="button" onclick="window.openReviewModal('${s.title.replace(/'/g, "\\'")}', 'الكاتب: ${s.author} | التصنيف: ${s.genre}', '${(s.description || '').replace(/'/g, "\\'").replace(/\n/g, "\\n")}', () => window.approveStory('${s.id}'), () => window.deleteStory('${s.id}'))" class="bg-cyanNeon/20 hover:bg-cyanNeon/30 text-cyanNeon border border-cyanNeon/40 text-xs font-bold px-3 py-2 rounded-xl transition">
+                            📖 قراءة ومراجعة
+                        </button>
                         ${!s.isApproved ? `
                             <button type="button" onclick="window.approveStory('${s.id}')" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-2 rounded-xl transition">
                                 ✓ قبول ونشر (Approve)
                             </button>
                         ` : ''}
-                        <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-cyanNeon/20 hover:bg-cyanNeon/30 text-cyanNeon border border-cyanNeon/40 text-xs font-bold px-3 py-2 rounded-xl transition">
-                            + أجزاء القصة (Parts)
-                        </button>
                         <button type="button" onclick="window.deleteStory('${s.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-bold px-3 py-2 rounded-xl transition">
                             حذف القصة
                         </button>
@@ -375,107 +370,6 @@
                 </div>
             `).join('');
         }
-
-        window.publishNewStory = async function() {
-            const title = document.getElementById('storyTitle').value.trim();
-            const author = document.getElementById('storyAuthor').value.trim();
-            const genre = document.getElementById('storyGenre').value;
-            const coverUrl = document.getElementById('storyCover').value.trim() || 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80';
-            const description = document.getElementById('storyDesc').value.trim();
-            const autoApprove = document.getElementById('chkAutoApprove').checked;
-
-            if (!title || !author || !description) return alert('الرجاء ملء جميع الحقول المطلوبة');
-
-            try {
-                await addDoc(collection(db, "stories"), {
-                    title, author, genre, coverUrl, description,
-                    likesCount: 0, viewsCount: 0, isApproved: autoApprove,
-                    createdAt: new Date().toISOString()
-                });
-                alert('✅ تم نشر القصة بنجاح!');
-                document.getElementById('storyTitle').value = '';
-                document.getElementById('storyAuthor').value = '';
-                document.getElementById('storyDesc').value = '';
-            } catch (err) {
-                alert('❌ تعذر الحفظ: ' + err.message);
-            }
-        };
-
-        window.manageParts = function(storyId, storyTitle) {
-            selectedStoryId = storyId;
-            document.getElementById('activeStoryTitle').innerText = `إدارة أجزاء: ${storyTitle}`;
-            document.getElementById('partsSection').classList.remove('hidden');
-            listenParts(storyId);
-        };
-
-        window.closePartsSection = function() {
-            document.getElementById('partsSection').classList.add('hidden');
-        };
-
-        function listenParts(storyId) {
-            const q = query(collection(db, `stories/${storyId}/parts`));
-            onSnapshot(q, (snapshot) => {
-                const parts = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
-                parts.sort((a, b) => (a.partNumber || 1) - (b.partNumber || 1));
-                renderParts(parts);
-            });
-        }
-
-        function renderParts(parts) {
-            const container = document.getElementById('partsContainer');
-            if (parts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500">لا توجد أجزاء لهذه القصة بعد.</p>`;
-                return;
-            }
-
-            container.innerHTML = parts.map(p => `
-                <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
-                    <span class="font-bold text-cyanNeon">الجزء ${p.partNumber || 1}: ${p.title} ${p.isApproved === false ? '<span class="text-amber-400 font-normal">(بانتظار الموافقة)</span>' : ''}</span>
-                    <div class="flex items-center gap-2">
-                        ${p.isApproved === false ? `<button type="button" onclick="window.approvePart('${p.id}')" class="text-emerald-400 font-bold hover:underline">✓ قبول الجزء</button>` : ''}
-                        <button type="button" onclick="window.deletePart('${p.id}')" class="text-red-400 hover:underline">حذف</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.publishNewPart = async function() {
-            if (!selectedStoryId) return;
-
-            const title = document.getElementById('partTitle').value.trim();
-            const content = document.getElementById('partContent').value.trim();
-
-            if (!title || !content) return alert('الرجاء إدخال عنوان ومحتوى الجزء!');
-
-            try {
-                const partsSnap = await getDocs(collection(db, `stories/${selectedStoryId}/parts`));
-                const nextNum = partsSnap.docs.length + 1;
-
-                await addDoc(collection(db, `stories/${selectedStoryId}/parts`), {
-                    partNumber: nextNum,
-                    title: title,
-                    content: content,
-                    isApproved: true,
-                    createdAt: new Date().toISOString()
-                });
-
-                alert(`✅ تم نشر الجزء ${nextNum} بنجاح للقصة!`);
-                document.getElementById('partTitle').value = '';
-                document.getElementById('partContent').value = '';
-            } catch (err) {
-                alert('❌ خطأ في النشر: ' + err.message);
-            }
-        };
-
-        window.approvePart = async function(partId) {
-            if (!selectedStoryId) return;
-            try {
-                await updateDoc(doc(db, `stories/${selectedStoryId}/parts`, partId), { isApproved: true });
-                alert('✅ تم قبول ونشر الجزء بنجاح!');
-            } catch (err) {
-                alert('❌ خطأ: ' + err.message);
-            }
-        };
 
         window.approveStory = async function(storyId) {
             try {
@@ -487,21 +381,16 @@
         };
 
         window.deleteStory = async function(storyId) {
-            if (!confirm('حذف هذه القصة؟')) return;
-            try {
-                await deleteDoc(doc(db, "stories", storyId));
-            } catch (err) {
-                alert('❌ فشل الحذف: ' + err.message);
-            }
-        };
-
-        window.deletePart = async function(partId) {
-            if (!selectedStoryId) return;
-            try {
-                await deleteDoc(doc(db, `stories/${selectedStoryId}/parts`, partId));
-            } catch (err) {
-                alert('❌ فشل الحذف: ' + err.message);
-            }
+            showConfirmModal(
+                'هل أنت متأكد من رغبتك في حذف هذه القصة بشكل نهائي مع أجزائها؟',
+                async () => {
+                    try {
+                        await deleteDoc(doc(db, "stories", storyId));
+                    } catch (err) {
+                        alert('❌ فشل الحذف: ' + err.message);
+                    }
+                }
+            );
         };
 
         listenGenres();
@@ -509,3 +398,5 @@
     </script>
 </body>
 </html>
+``` المباني
+```
