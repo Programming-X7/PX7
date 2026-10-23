@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin & Moderation Hub</title>
+    <title>لوحة تحكم منصة قصص الخيال العلمي - Admin & Full Editor Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Cairo & Orbitron -->
@@ -34,369 +34,1134 @@
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        blockquote {
-            border-right: 4px solid #00F0FF;
-            background: rgba(0, 240, 255, 0.05);
-            padding: 8px 14px;
-            margin: 10px 0;
-            border-radius: 8px;
-            font-style: italic;
-        }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen flex flex-col justify-between">
-<div class="max-w-5xl mx-auto w-full">
+    <div class="max-w-5xl mx-auto w-full">
 
-    <!-- Header Bar with Direct WhatsApp & Contact Links -->
-    <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyanNeon/20 pb-5 gap-4">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyanNeon to-purpleNeon p-0.5 shadow-lg shadow-cyanNeon/20">
-                <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
-                    🚀
-                </div>
-            </div>
-            <div>
-                <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
-                    لوحة تحكم قصص الخيال العلمي <span class="text-xs font-orbitron font-semibold text-cyanNeon bg-cyan-950/60 border border-cyanNeon/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
-                </h1>
-                <p class="text-xs text-slate-400">نظام الإشراف والتصنيفات والمراجعة النصية الشاملة للأجزاء والقصص</p>
-            </div>
-        </div>
-
-        <div class="flex flex-col md:flex-row items-end md:items-center gap-3 text-xs">
-            <a href="mailto:info.designerweb99@gmail.com" class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300">
-                <span class="text-cyanNeon">✉</span> info.designerweb99@gmail.com
-            </a>
-            <a href="https://wa.me/212770217907" target="_blank" class="bg-emerald-950/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-emerald-400 font-bold">
-                <span>💬</span> WhatsApp: 0770-217907
-            </a>
-        </div>
-    </header>
-
-    <!-- Full Chapters Review Reader Modal -->
-    <div id="readModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-lg flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-bgCard border border-cyanNeon/50 rounded-2xl p-6 max-w-3xl w-full max-h-[85vh] flex flex-col justify-between shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-2">
-                    <span class="text-cyanNeon text-xl">📖</span>
-                    <h3 id="readModalTitle" class="text-lg font-extrabold text-white">عنوان القصة والشابترات الكاملة</h3>
-                </div>
-                <button type="button" onclick="closeReadModal()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg">إغلاق</button>
-            </div>
-
-            <div id="readModalBody" class="overflow-y-auto pr-2 my-2 space-y-4 text-slate-200 text-sm leading-relaxed" style="line-height: 1.8;">
-                <div id="readModalMeta" class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs flex items-center justify-between text-slate-400">
-                    <!-- Meta info -->
-                </div>
-                <div id="readModalContent" class="bg-slate-950 p-5 rounded-2xl border border-slate-800 whitespace-pre-wrap font-sans text-slate-100">
-                    <!-- Content -->
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between border-t border-slate-800 pt-3">
-                <button type="button" id="readModalRejectBtn" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-bold px-5 py-2.5 rounded-xl transition">
-                    🗑️ رفض وحذف
-                </button>
-                <button type="button" id="readModalApproveBtn" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-6 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20">
-                    ✓ قبول وتأكيد النشر المباشر
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Story Modal -->
-    <div id="editStoryModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-bgCard border border-cyanNeon/40 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-lg font-extrabold text-white">تعديل بيانات القصة</h3>
-                <button type="button" onclick="closeEditModal()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg">إغلاق</button>
-            </div>
-
-            <input type="hidden" id="editStoryId">
-
-            <div>
-                <label for="editTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان القصة</label>
-                <input type="text" id="editTitle" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label for="editAuthor" class="block text-xs font-semibold text-slate-300 mb-1">الكاتب</label>
-                    <input type="text" id="editAuthor" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
-                </div>
-                <div>
-                    <label for="editGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف</label>
-                    <select id="editGenre" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
-                        <option value="Cyberpunk">Cyberpunk</option>
-                        <option value="Time Travel">Time Travel</option>
-                        <option value="Space Opera">Space Opera</option>
-                        <option value="AI & Robots">AI & Robots</option>
-                        <option value="Sci-Fi">Sci-Fi العامة</option>
-                    </select>
-                </div>
-            </div>
-
-            <div>
-                <label for="editCover" class="block text-xs font-semibold text-slate-300 mb-1">رابط الغلاف</label>
-                <input type="url" id="editCover" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
-            </div>
-
-            <div>
-                <label for="editDesc" class="block text-xs font-semibold text-slate-300 mb-1">الملخص</label>
-                <textarea id="editDesc" rows="3" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm"></textarea>
-            </div>
-
+        <!-- Header Bar with Direct WhatsApp & Contact Links -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyanNeon/20 pb-5 gap-4">
             <div class="flex items-center gap-3">
-                <button type="button" onclick="saveEditedStory()" class="bg-cyanNeon hover:opacity-90 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl transition text-sm">
-                    حفظ التعديلات
-                </button>
-                <button type="button" onclick="closeEditModal()" class="text-xs text-slate-400 hover:text-white">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Moderation & Stories Management Tabs -->
-    <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 shadow-xl">
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4 border-b border-slate-800 pb-4">
-            <div class="flex items-center gap-3">
-                <button type="button" id="tabApprovedBtn" onclick="switchTab('approved')" class="bg-cyanNeon/20 text-cyanNeon border border-cyanNeon/50 text-xs font-bold px-4 py-2 rounded-xl transition">
-                    القصص المنشورة في التطبيق
-                </button>
-                <button type="button" id="tabPendingBtn" onclick="switchTab('pending')" class="bg-slate-950 text-slate-400 hover:text-amber-400 border border-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2">
-                    بانتظار الموافقة (Moderation Queue)
-                    <span id="pendingBadge" class="bg-amber-500 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden">0</span>
-                </button>
-            </div>
-            <span id="storiesBadge" class="bg-cyan-950 text-cyanNeon text-xs font-bold px-3 py-1 rounded-full border border-cyanNeon/30">
-                    0 قصص
-                </span>
-        </div>
-
-        <!-- Stories Stream Container -->
-        <div id="storiesContainer" class="space-y-4">
-            <div class="text-center py-12 text-slate-500">
-                جاري تحميل القصص المباشرة من Firestore...
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Footer Copyright -->
-<footer class="mt-12 text-center text-xs text-slate-500 py-6 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 max-w-5xl mx-auto w-full">
-    <div>
-        © Oussama ZCompany - All rights reserved
-    </div>
-    <div class="flex items-center gap-4 text-[11px] text-slate-400">
-        <span>Email: info.designerweb99@gmail.com</span>
-        <a href="https://wa.me/212770217907" target="_blank" class="text-emerald-400 hover:underline font-bold">
-            WhatsApp: 0770-217907
-        </a>
-    </div>
-</footer>
-
-<!-- Firebase v10 JavaScript SDK -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { initializeFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-    const config = {
-        apiKey: "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ",
-        authDomain: "com-oussama-myapplicatio-c32d4.firebaseapp.com",
-        projectId: "com-oussama-myapplicatio-c32d4",
-        storageBucket: "com-oussama-myapplicatio-c32d4.firebasestorage.app",
-        messagingSenderId: "65318768984",
-        appId: "1:65318768984:web:b3d9356b827695717b552d"
-    };
-
-    const app = initializeApp(config);
-    const db = initializeFirestore(app, { experimentalForceLongPolling: true });
-    const auth = getAuth(app);
-
-    let activeTab = 'approved';
-    let cachedStories = [];
-
-    signInAnonymously(auth).catch(() => {});
-
-    window.switchTab = function(tab) {
-        activeTab = tab;
-        renderStoriesList();
-    };
-
-    function listenStories() {
-        const q = query(collection(db, "stories"));
-        onSnapshot(q, async (snapshot) => {
-            const stories = [];
-            for (let docSnap of snapshot.docs) {
-                let parts = [];
-                try {
-                    const partsSnap = await getDocs(collection(db, `stories/${docSnap.id}/parts`));
-                    parts = partsSnap.docs.map(p => ({ id: p.id, ...p.data() }));
-                } catch (_) {}
-
-                const data = docSnap.data();
-                stories.push({
-                    id: docSnap.id,
-                    partsCount: parts.length,
-                    partsList: parts,
-                    isApproved: data.isApproved === true,
-                    ...data
-                });
-            }
-            stories.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-            cachedStories = stories;
-
-            const pendingCount = stories.filter(s => !s.isApproved).length;
-            const pBadge = document.getElementById('pendingBadge');
-            if (pendingCount > 0) {
-                pBadge.innerText = pendingCount;
-                pBadge.classList.remove('hidden');
-            } else {
-                pBadge.classList.add('hidden');
-            }
-
-            renderStoriesList();
-        });
-    }
-
-    function renderStoriesList() {
-        const container = document.getElementById('storiesContainer');
-        const filtered = cachedStories.filter(s => activeTab === 'approved' ? s.isApproved : !s.isApproved);
-
-        document.getElementById('storiesBadge').innerText = `${filtered.length} قصص`;
-
-        if (filtered.length === 0) {
-            container.innerHTML = `<div class="text-center py-12 text-slate-500">لا توجد قصص ${activeTab === 'approved' ? 'منشورة حالياً' : 'بانتظار الموافقة'}.</div>`;
-            return;
-        }
-
-        container.innerHTML = filtered.map((s, index) => `
-            <div class="fade-in-up bg-slate-950 border border-slate-800 hover:border-cyanNeon/50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition" style="animation-delay: ${index * 60}ms">
-                <div class="flex items-center gap-4 w-full md:w-auto">
-                    <img src="${s.coverUrl}" alt="Cover" class="w-14 h-18 object-cover rounded-lg border border-slate-700" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80'">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] bg-purple-950 text-cyanNeon font-bold px-2 py-0.5 rounded border border-purpleNeon/40">${s.genre || 'Sci-Fi'}</span>
-                            ${!s.isApproved ? `<span class="text-[10px] bg-amber-950 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/40 animate-pulse">قيد المراجعة</span>` : ''}
-                        </div>
-                        <h3 class="font-extrabold text-white text-base mt-1">${s.title}</h3>
-                        <p class="text-xs text-slate-400">الكاتب: ${s.author} | ${s.partsCount} أجزاء متاحة</p>
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyanNeon to-purpleNeon p-0.5 shadow-lg shadow-cyanNeon/20">
+                    <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
+                        🚀
                     </div>
                 </div>
-                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                    <button type="button" onclick="window.openReviewModal('${s.id}')" class="bg-cyanNeon/20 hover:bg-cyanNeon/30 text-cyanNeon border border-cyanNeon/40 text-xs font-bold px-3 py-2 rounded-xl transition">
-                        📖 قراءة ومراجعة النص الشامل
-                    </button>
-                    <button type="button" onclick="window.openEditModal('${s.id}')" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition">
-                        ✏ تعديل
-                    </button>
-                    ${!s.isApproved ? `
-                        <button type="button" onclick="window.approveStory('${s.id}')" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-2 rounded-xl transition">
-                            ✓ قبول ونشر (Approve)
-                        </button>
-                    ` : ''}
-                    <button type="button" onclick="window.deleteStory('${s.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-bold px-3 py-2 rounded-xl transition">
-                        حذف القصة
-                    </button>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
+                        لوحة تحكم قصص الخيال العلمي <span class="text-xs font-orbitron font-semibold text-cyanNeon bg-cyan-950/60 border border-cyanNeon/30 px-2.5 py-0.5 rounded-full">ADMIN HUB</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">نظام الإشراف والتصنيفات والتعديل المباشر الكامل للقصص والأجزاء</p>
                 </div>
             </div>
-        `).join('');
-    }
 
-    window.openReviewModal = function(storyId) {
-        const story = cachedStories.find(s => s.id === storyId);
-        if (!story) return;
+            <div class="flex flex-col md:flex-row items-end md:items-center gap-3 text-xs">
+                <a href="mailto:info.designerweb99@gmail.com" class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300">
+                    <span class="text-cyanNeon">✉</span> info.designerweb99@gmail.com
+                </a>
+                <a href="https://wa.me/212770217907" target="_blank" class="bg-emerald-950/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-emerald-400 font-bold">
+                    <span>💬</span> WhatsApp: 0770-217907
+                </a>
+            </div>
+        </header>
 
-        document.getElementById('readModalTitle').innerText = story.title;
-        document.getElementById('readModalMeta').innerHTML = `
-            <span>الكاتب: ${story.author}</span>
-            <span>التصنيف: ${story.genre}</span>
-            <span>الأجزاء: ${story.partsCount}</span>
-        `;
+        <!-- Edit Story Modal -->
+        <div id="editStoryModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-bgCard border border-cyanNeon/40 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 class="text-lg font-extrabold text-white">تعديل بيانات القصة والملخص</h3>
+                    <button type="button" onclick="closeEditModal()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg">إغلاق</button>
+                </div>
 
-        let textContent = `📌 ملخص القصة:\n${story.description || 'لا يوجد ملخص'}\n\n`;
-        if (story.partsList && story.partsList.length > 0) {
-            textContent += `----------------------------------------\n`;
-            story.partsList.forEach(p => {
-                textContent += `📖 ${p.title || ('الجزء ' + p.partNumber)}:\n${p.content}\n\n`;
+                <input type="hidden" id="editStoryId">
+
+                <div>
+                    <label for="editTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان القصة</label>
+                    <input type="text" id="editTitle" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="editAuthor" class="block text-xs font-semibold text-slate-300 mb-1">الكاتب</label>
+                        <input type="text" id="editAuthor" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                    </div>
+                    <div>
+                        <label for="editGenre" class="block text-xs font-semibold text-slate-300 mb-1">التصنيف</label>
+                        <select id="editGenre" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                            <option value="Cyberpunk">Cyberpunk</option>
+                            <option value="Time Travel">Time Travel</option>
+                            <option value="Space Opera">Space Opera</option>
+                            <option value="AI & Robots">AI & Robots</option>
+                            <option value="Sci-Fi">Sci-Fi العامة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="editCover" class="block text-xs font-semibold text-slate-300 mb-1">رابط الغلاف</label>
+                    <input type="url" id="editCover" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                </div>
+
+                <div>
+                    <label for="editDesc" class="block text-xs font-semibold text-slate-300 mb-1">الملخص (Synopsis)</label>
+                    <textarea id="editDesc" rows="3" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm"></textarea>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="saveEditedStory()" class="bg-cyanNeon hover:opacity-90 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl transition text-sm">
+                        حفظ التعديلات
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="text-xs text-slate-400 hover:text-white">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Part/Chapter Content Modal (Full Part Text Editor) -->
+        <div id="editPartModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-bgCard border border-purpleNeon/50 rounded-2xl p-6 max-w-2xl w-full shadow-2xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 class="text-lg font-extrabold text-white">✏ تعديل نصوص أجزاء وفصول القصة</h3>
+                    <button type="button" onclick="closeEditPartModal()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg">إغلاق</button>
+                </div>
+
+                <input type="hidden" id="editPartId">
+
+                <div>
+                    <label for="editPartTitle" class="block text-xs font-semibold text-slate-300 mb-1">عنوان الجزء</label>
+                    <input type="text" id="editPartTitle" class="w-full bg-slate-950 border border-slate-700 p-2.5 rounded-xl text-white text-sm">
+                </div>
+
+                <div>
+                    <label for="editPartContent" class="block text-xs font-semibold text-slate-300 mb-1">محتوى الجزء الكامل (Markdown / Text)</label>
+                    <textarea id="editPartContent" rows="10" class="w-full bg-slate-950 border border-slate-700 p-3 rounded-xl text-white text-sm font-mono leading-relaxed"></textarea>
+                </div>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="button" onclick="saveEditedPart()" class="bg-purpleNeon hover:opacity-90 text-white font-extrabold px-6 py-2.5 rounded-xl transition text-sm">
+                        حفظ النص والتعديلات
+                    </button>
+                    <button type="button" onclick="closeEditPartModal()" class="text-xs text-slate-400 hover:text-white">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Parts Sub-collection Manager -->
+        <div id="partsSection" class="bg-bgCard border border-purpleNeon/50 rounded-2xl p-6 mb-8 shadow-2xl hidden">
+            <div class="flex justify-between items-center mb-4 border-b border-purpleNeon/30 pb-3">
+                <div>
+                    <span class="text-xs text-cyanNeon font-bold uppercase tracking-wider">Chapter & Content Manager</span>
+                    <h3 id="activeStoryTitle" class="text-xl font-extrabold text-white">إدارة وتعديل أجزاء القصة</h3>
+                </div>
+                <button type="button" onclick="closePartsSection()" class="text-xs text-slate-300 hover:text-white bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl transition">
+                    إغلاق
+                </button>
+            </div>
+
+            <!-- Parts List for Selected Story -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-400 mb-3">الأجزاء والشبترات المتاحة للتعديل والنشر:</h4>
+                <div id="partsContainer" class="space-y-2">
+                    <!-- Dynamic parts load here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Moderation & Stories Management Tabs -->
+        <div class="bg-bgCard border border-cyanNeon/30 rounded-2xl p-6 shadow-xl">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4 border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <button type="button" id="tabApprovedBtn" onclick="switchTab('approved')" class="bg-cyanNeon/20 text-cyanNeon border border-cyanNeon/50 text-xs font-bold px-4 py-2 rounded-xl transition">
+                        القصص المنشورة في التطبيق
+                    </button>
+                    <button type="button" id="tabPendingBtn" onclick="switchTab('pending')" class="bg-slate-950 text-slate-400 hover:text-amber-400 border border-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2">
+                        بانتظار الموافقة (Moderation Queue)
+                        <span id="pendingBadge" class="bg-amber-500 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden">0</span>
+                    </button>
+                </div>
+                <span id="storiesBadge" class="bg-cyan-950 text-cyanNeon text-xs font-bold px-3 py-1 rounded-full border border-cyanNeon/30">
+                    0 قصص
+                </span>
+            </div>
+
+            <!-- Stories Stream Container -->
+            <div id="storiesContainer" class="space-y-4">
+                <div class="text-center py-12 text-slate-500">
+                    جاري تحميل القصص المباشرة من Firestore...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Copyright -->
+    <footer class="mt-12 text-center text-xs text-slate-500 py-6 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 max-w-5xl mx-auto w-full">
+        <div>
+            © Oussama ZCompany - All rights reserved
+        </div>
+        <div class="flex items-center gap-4 text-[11px] text-slate-400">
+            <span>Email: info.designerweb99@gmail.com</span>
+            <a href="https://wa.me/212770217907" target="_blank" class="text-emerald-400 hover:underline font-bold">
+                WhatsApp: 0770-217907
+            </a>
+        </div>
+    </footer>
+
+    <!-- Firebase v10 JavaScript SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { initializeFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const config = {
+            apiKey: "AIzaSyCSI1cYXgWkY6jc_kZip3srDeQmDC3c8AQ",
+            authDomain: "com-oussama-myapplicatio-c32d4.firebaseapp.com",
+            projectId: "com-oussama-myapplicatio-c32d4",
+            storageBucket: "com-oussama-myapplicatio-c32d4.firebasestorage.app",
+            messagingSenderId: "65318768984",
+            appId: "1:65318768984:web:b3d9356b827695717b552d"
+        };
+
+        const app = initializeApp(config);
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+        const auth = getAuth(app);
+
+        let activeTab = 'approved';
+        let cachedStories = [];
+        let selectedStoryId = null;
+        let selectedStoryParts = [];
+
+        signInAnonymously(auth).catch(() => {});
+
+        window.switchTab = function(tab) {
+            activeTab = tab;
+            renderStoriesList();
+        };
+
+        function listenStories() {
+            const q = query(collection(db, "stories"));
+            onSnapshot(q, async (snapshot) => {
+                const stories = [];
+                for (let docSnap of snapshot.docs) {
+                    let partsCount = 0;
+                    try {
+                        const partsSnap = await getDocs(collection(db, `stories/${docSnap.id}/parts`));
+                        partsCount = partsSnap.docs.length;
+                    } catch (_) {}
+
+                    const data = docSnap.data();
+                    stories.push({
+                        id: docSnap.id,
+                        partsCount: partsCount,
+                        isApproved: data.isApproved === true,
+                        ...data
+                    });
+                }
+                stories.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+                cachedStories = stories;
+
+                const pendingCount = stories.filter(s => !s.isApproved).length;
+                const pBadge = document.getElementById('pendingBadge');
+                if (pendingCount > 0) {
+                    pBadge.innerText = pendingCount;
+                    pBadge.classList.remove('hidden');
+                } else {
+                    pBadge.classList.add('hidden');
+                }
+
+                renderStoriesList();
             });
         }
 
-        document.getElementById('readModalContent').innerText = textContent;
+        function renderStoriesList() {
+            const container = document.getElementById('storiesContainer');
+            const filtered = cachedStories.filter(s => activeTab === 'approved' ? s.isApproved : !s.isApproved);
 
-        document.getElementById('readModalApproveBtn').onclick = () => {
-            window.approveStory(story.id);
-            closeReadModal();
+            document.getElementById('storiesBadge').innerText = `${filtered.length} قصص`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500">لا توجد قصص ${activeTab === 'approved' ? 'منشورة حالياً' : 'بانتظار الموافقة'}.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map((s, index) => `
+                <div class="fade-in-up bg-slate-950 border border-slate-800 hover:border-cyanNeon/50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition" style="animation-delay: ${index * 60}ms">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <img src="${s.coverUrl}" alt="Cover" class="w-14 h-18 object-cover rounded-lg border border-slate-700" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80'">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] bg-purple-950 text-cyanNeon font-bold px-2 py-0.5 rounded border border-purpleNeon/40">${s.genre || 'Sci-Fi'}</span>
+                                ${!s.isApproved ? `<span class="text-[10px] bg-amber-950 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/40 animate-pulse">قيد المراجعة</span>` : ''}
+                            </div>
+                            <h3 class="font-extrabold text-white text-base mt-1">${s.title}</h3>
+                            <p class="text-xs text-slate-400">الكاتب: ${s.author} | ${s.partsCount} أجزاء متاحة</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                        <button type="button" onclick="window.manageParts('${s.id}', '${s.title.replace(/'/g, "\\'")}')" class="bg-purpleNeon/20 hover:bg-purpleNeon/30 text-purpleNeon border border-purpleNeon/40 text-xs font-bold px-3 py-2 rounded-xl transition">
+                            ✏ تعديل وإدارة الأجزاء (${s.partsCount})
+                        </button>
+                        <button type="button" onclick="window.openEditModal('${s.id}')" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition">
+                            ✏ تعديل القصة
+                        </button>
+                        ${!s.isApproved ? `
+                            <button type="button" onclick="window.approveStory('${s.id}')" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-2 rounded-xl transition">
+                                ✓ قبول ونشر (Approve)
+                            </button>
+                        ` : ''}
+                        <button type="button" onclick="window.deleteStory('${s.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-bold px-3 py-2 rounded-xl transition">
+                            حذف القصة
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openEditModal = function(storyId) {
+            const story = cachedStories.find(s => s.id === storyId);
+            if (!story) return;
+
+            document.getElementById('editStoryId').value = story.id;
+            document.getElementById('editTitle').value = story.title || '';
+            document.getElementById('editAuthor').value = story.author || '';
+            document.getElementById('editGenre').value = story.genre || 'Sci-Fi';
+            document.getElementById('editCover').value = story.coverUrl || '';
+            document.getElementById('editDesc').value = story.description || '';
+
+            document.getElementById('editStoryModal').classList.remove('hidden');
         };
 
-        document.getElementById('readModalRejectBtn').onclick = () => {
-            window.deleteStory(story.id);
-            closeReadModal();
+        window.closeEditModal = function() {
+            document.getElementById('editStoryModal').classList.add('hidden');
         };
 
-        document.getElementById('readModal').classList.remove('hidden');
-    };
+        window.saveEditedStory = async function() {
+            const id = document.getElementById('editStoryId').value;
+            if (!id || !db) return;
 
-    window.closeReadModal = function() {
-        document.getElementById('readModal').classList.add('hidden');
-    };
+            try {
+                await updateDoc(doc(db, "stories", id), {
+                    title: document.getElementById('editTitle').value.trim(),
+                    author: document.getElementById('editAuthor').value.trim(),
+                    genre: document.getElementById('editGenre').value,
+                    coverUrl: document.getElementById('editCover').value.trim(),
+                    description: document.getElementById('editDesc').value.trim(),
+                });
+                alert('✅ تم حفظ التعديلات بنجاح!');
+                closeEditModal();
+            } catch (err) {
+                alert('❌ فشل حفظ التعديلات: ' + err.message);
+            }
+        };
 
-    window.openEditModal = function(storyId) {
-        const story = cachedStories.find(s => s.id === storyId);
-        if (!story) return;
+        window.manageParts = function(storyId, storyTitle) {
+            selectedStoryId = storyId;
+            document.getElementById('activeStoryTitle').innerText = `إدارة وتعديل أجزاء: ${storyTitle}`;
+            document.getElementById('partsSection').classList.remove('hidden');
+            listenParts(storyId);
+        };
 
-        document.getElementById('editStoryId').value = story.id;
-        document.getElementById('editTitle').value = story.title || '';
-        document.getElementById('editAuthor').value = story.author || '';
-        document.getElementById('editGenre').value = story.genre || 'Sci-Fi';
-        document.getElementById('editCover').value = story.coverUrl || '';
-        document.getElementById('editDesc').value = story.description || '';
+        window.closePartsSection = function() {
+            document.getElementById('partsSection').classList.add('hidden');
+        };
 
-        document.getElementById('editStoryModal').classList.remove('hidden');
-    };
-
-    window.closeEditModal = function() {
-        document.getElementById('editStoryModal').classList.add('hidden');
-    };
-
-    window.saveEditedStory = async function() {
-        const id = document.getElementById('editStoryId').value;
-        if (!id || !db) return;
-
-        try {
-            await updateDoc(doc(db, "stories", id), {
-                title: document.getElementById('editTitle').value.trim(),
-                author: document.getElementById('editAuthor').value.trim(),
-                genre: document.getElementById('editGenre').value,
-                coverUrl: document.getElementById('editCover').value.trim(),
-                description: document.getElementById('editDesc').value.trim(),
+        function listenParts(storyId) {
+            const q = query(collection(db, `stories/${storyId}/parts`));
+            onSnapshot(q, (snapshot) => {
+                const parts = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+                parts.sort((a, b) => (a.partNumber || 1) - (b.partNumber || 1));
+                selectedStoryParts = parts;
+                renderParts(parts);
             });
-            alert('✅ تم حفظ التعديلات بنجاح!');
-            closeEditModal();
-        } catch (err) {
-            alert('❌ فشل حفظ التعديلات: ' + err.message);
         }
-    };
 
-    window.approveStory = async function(storyId) {
-        try {
-            await updateDoc(doc(db, "stories", storyId), { isApproved: true });
-            alert('✅ تم قبول ونشر القصة بنجاح!');
-        } catch (err) {
-            alert('❌ خطأ: ' + err.message);
+        function renderParts(parts) {
+            const container = document.getElementById('partsContainer');
+            if (parts.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500">لا توجد أجزاء لهذه القصة بعد.</p>`;
+                return;
+            }
+
+            container.innerHTML = parts.map(p => `
+                <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl flex items-center justify-between text-xs gap-3">
+                    <div>
+                        <span class="font-bold text-cyanNeon">الجزء ${p.partNumber || 1}: ${p.title}</span>
+                        ${p.isApproved === false ? '<span class="text-amber-400 font-normal mr-2">(قيد المراجعة)</span>' : ''}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="window.openEditPartModal('${p.id}')" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg font-bold">
+                            ✏ تعديل النص
+                        </button>
+                        ${p.isApproved === false ? `<button type="button" onclick="window.approvePart('${p.id}')" class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1.5 rounded-lg font-bold">✓ قبول الجزء</button>` : ''}
+                        <button type="button" onclick="window.deletePart('${p.id}')" class="text-red-400 hover:underline">حذف</button>
+                    </div>
+                </div>
+            `).join('');
         }
-    };
 
-    window.deleteStory = async function(storyId) {
-        if (!confirm('هل أنت متأكد من رفض وحذف هذه القصة بشكل نهائي؟')) return;
-        try {
-            await deleteDoc(doc(db, "stories", storyId));
-        } catch (err) {
-            alert('❌ فشل الحذف: ' + err.message);
-        }
-    };
+        window.openEditPartModal = function(partId) {
+            const part = selectedStoryParts.find(p => p.id === partId);
+            if (!part) return;
 
-    listenStories();
-</script>
+            document.getElementById('editPartId').value = part.id;
+            document.getElementById('editPartTitle').value = part.title || '';
+            document.getElementById('editPartContent').value = part.content || '';
+
+            document.getElementById('editPartModal').classList.remove('hidden');
+        };
+
+        window.closeEditPartModal = function() {
+            document.getElementById('editPartModal').classList.add('hidden');
+        };
+
+        window.saveEditedPart = async function() {
+            const partId = document.getElementById('editPartId').value;
+            if (!selectedStoryId || !partId) return;
+
+            try {
+                await updateDoc(doc(db, `stories/${selectedStoryId}/parts`, partId), {
+                    title: document.getElementById('editPartTitle').value.trim(),
+                    content: document.getElementById('editPartContent').value.trim(),
+                });
+                alert('✅ تم حفظ تعديلات الجزء والنص بنجاح!');
+                closeEditPartModal();
+            } catch (err) {
+                alert('❌ خطأ في الحفظ: ' + err.message);
+            }
+        };
+
+        window.approvePart = async function(partId) {
+            if (!selectedStoryId) return;
+            try {
+                await updateDoc(doc(db, `stories/${selectedStoryId}/parts`, partId), { isApproved: true });
+                alert('✅ تم قبول ونشر الجزء بنجاح!');
+            } catch (err) {
+                alert('❌ خطأ: ' + err.message);
+            }
+        };
+
+        window.approveStory = async function(storyId) {
+            try {
+                await updateDoc(doc(db, "stories", storyId), { isApproved: true });
+                alert('✅ تم قبول ونشر القصة بنجاح!');
+            } catch (err) {
+                alert('❌ خطأ: ' + err.message);
+            }
+        };
+
+        window.deleteStory = async function(storyId) {
+            if (!confirm('هل أنت متأكد من حذف هذه القصة؟')) return;
+            try {
+                await deleteDoc(doc(db, "stories", storyId));
+            } catch (err) {
+                alert('❌ فشل الحذف: ' + err.message);
+            }
+        };
+
+        window.deletePart = async function(partId) {
+            if (!selectedStoryId || !confirm('حذف هذا الجزء؟')) return;
+            try {
+                await deleteDoc(doc(db, `stories/${selectedStoryId}/parts`, partId));
+            } catch (err) {
+                alert('❌ فشل الحذف: ' + err.message);
+            }
+        };
+
+        listenStories();
+    </script>
 </body>
 </html>
+```
+
+---
+
+## 🎨 2. Text Color Palette Toolbar in Submission Screen ([`lib/views/submit_story_screen.dart`](file:///C:/Users/Oussama/AndroidStudioProjects/Qisas_khayaliya/lib/views/submit_story_screen.dart))
+
+Adds text color tags (`<color name="cyan">`, `<color name="red">`, `<color name="green">`, `<color name="gold">`, `<color name="purple">`) allowing authors to highlight dialogues or whispers in color before submitting:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../models/story_model.dart';
+import '../services/firebase_service.dart';
+import '../theme/app_theme.dart';
+import '../viewmodels/story_provider.dart';
+import '../widgets/glass_card.dart';
+import '../widgets/scifi_button.dart';
+
+class SubmitStoryScreen extends StatefulWidget {
+  const SubmitStoryScreen({super.key});
+
+  @override
+  State<SubmitStoryScreen> createState() => _SubmitStoryScreenState();
+}
+
+class _SubmitStoryScreenState extends State<SubmitStoryScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final FirebaseService _firebaseService = FirebaseService();
+  User? _currentUser;
+
+  // Mode A: New Story Form Controllers
+  final _titleController = TextEditingController();
+  final _authorController = TextEditingController();
+  final _coverController = TextEditingController();
+  final _descController = TextEditingController();
+  final _firstPartTitleController = TextEditingController(text: 'الجزء الأول');
+  final _firstPartContentController = TextEditingController();
+
+  // Mode B: Add Part Form Controllers
+  StoryModel? _selectedStoryForPart;
+  final _partTitleController = TextEditingController();
+  final _partContentController = TextEditingController();
+
+  String _selectedGenre = 'Cyberpunk';
+  bool _isSubmitting = false;
+
+  final List<String> _genres = [
+    'Cyberpunk',
+    'Time Travel',
+    'Space Opera',
+    'AI & Robots',
+    'Sci-Fi',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _checkUserAuth();
+  }
+
+  void _checkUserAuth() {
+    setState(() {
+      _currentUser = FirebaseAuth.instance.currentUser;
+      if (_currentUser != null && _currentUser!.displayName != null) {
+        _authorController.text = _currentUser!.displayName!;
+      }
+    });
+  }
+
+  Future<void> _signInUser() async {
+    try {
+      final userCredential = await FirebaseAuth.instance.signInAnonymously();
+      setState(() {
+        _currentUser = userCredential.user;
+        if (_currentUser != null) {
+          _authorController.text = 'كاتب مسجل (Firebase Auth)';
+        }
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ تم تسجيل الدخول بنجاح! يمكنك الآن نشر مساهماتك.', style: GoogleFonts.cairo()),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('حدث خطأ أثناء تسجيل الدخول: $e', style: GoogleFonts.cairo()),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _titleController.dispose();
+    _authorController.dispose();
+    _coverController.dispose();
+    _descController.dispose();
+    _firstPartTitleController.dispose();
+    _firstPartContentController.dispose();
+    _partTitleController.dispose();
+    _partContentController.dispose();
+    super.dispose();
+  }
+
+  void _setPresetCover(String url) {
+    setState(() {
+      _coverController.text = url;
+    });
+  }
+
+  void _insertFormatting(TextEditingController controller, String prefix, String suffix) {
+    final text = controller.text;
+    final selection = controller.selection;
+
+    if (selection.isValid && !selection.isCollapsed) {
+      final selectedText = text.substring(selection.start, selection.end);
+      final newText = text.replaceRange(
+        selection.start,
+        selection.end,
+        '$prefix$selectedText$suffix',
+      );
+      controller.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(
+          offset: selection.start + prefix.length + selectedText.length + suffix.length,
+        ),
+      );
+    } else {
+      final cursor = selection.isValid ? selection.start : text.length;
+      final newText = text.replaceRange(cursor, cursor, '$prefix$suffix');
+      controller.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: cursor + prefix.length),
+      );
+    }
+  }
+
+  Widget _buildFormattingToolbar(TextEditingController controller) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: AppTheme.bgDark,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppTheme.cyanNeon.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Tooltip(
+              message: 'نص عريض (Bold)',
+              child: IconButton(
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.format_bold, color: AppTheme.cyanNeon, size: 18),
+                onPressed: () => _insertFormatting(controller, '**', '**'),
+              ),
+            ),
+            Tooltip(
+              message: 'حوار عاطفي (Dialogue)',
+              child: IconButton(
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.format_quote, color: AppTheme.purpleNeon, size: 18),
+                onPressed: () => _insertFormatting(controller, '> 💬 "', '"\n'),
+              ),
+            ),
+            // Text Color Palette Options
+            IconButton(
+              constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.circle, color: Color(0xFF00F0FF), size: 16),
+              onPressed: () => _insertFormatting(controller, '<color name="cyan">', '</color>'),
+            ),
+            IconButton(
+              constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.circle, color: Color(0xFFFF2A6D), size: 16),
+              onPressed: () => _insertFormatting(controller, '<color name="red">', '</color>'),
+            ),
+            IconButton(
+              constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.circle, color: Color(0xFF00FF66), size: 16),
+              onPressed: () => _insertFormatting(controller, '<color name="green">', '</color>'),
+            ),
+            IconButton(
+              constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.circle, color: Color(0xFFFFC107), size: 16),
+              onPressed: () => _insertFormatting(controller, '<color name="gold">', '</color>'),
+            ),
+            Tooltip(
+              message: 'كود نظامي (Code)',
+              child: IconButton(
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.code, color: Colors.amberAccent, size: 18),
+                onPressed: () => _insertFormatting(controller, '```\n[تنبيه: ', ']\n```'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Submit Mode A: New Story
+  void _handleSubmitNewStory() async {
+    if (_currentUser == null) {
+      _showErrorSnackBar('الرجاء تسجيل الدخول أولاً لنشر القصة!');
+      return;
+    }
+
+    final title = _titleController.text.trim();
+    final author = _authorController.text.trim();
+    final desc = _descController.text.trim();
+    final cover = _coverController.text.trim().isNotEmpty
+        ? _coverController.text.trim()
+        : 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80';
+    final partTitle = _firstPartTitleController.text.trim();
+    final partContent = _firstPartContentController.text.trim();
+
+    if (title.isEmpty || author.isEmpty || desc.isEmpty) {
+      _showErrorSnackBar('الرجاء كتابة عنوان القصة، اسم الكاتب، والملخص!');
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      await _firebaseService.submitStoryForReview(
+        title: title,
+        author: author,
+        genre: _selectedGenre,
+        coverUrl: cover,
+        description: desc,
+        firstPartTitle: partTitle,
+        firstPartContent: partContent,
+      );
+
+      if (mounted) {
+        _showSuccessDialog('تم إرسال قصتك بنجاح للمراجعة!');
+      }
+    } catch (e) {
+      _showErrorSnackBar('حدث خطأ أثناء الإرسال: $e');
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  // Submit Mode B: Add Part to Existing Story
+  void _handleSubmitPartToStory() async {
+    if (_currentUser == null) {
+      _showErrorSnackBar('الرجاء تسجيل الدخول أولاً لإضافة الجزء!');
+      return;
+    }
+
+    if (_selectedStoryForPart == null) {
+      _showErrorSnackBar('الرجاء اختيار قصة قائمة أولاً!');
+      return;
+    }
+
+    final content = _partContentController.text.trim();
+    final title = _partTitleController.text.trim();
+
+    if (content.isEmpty) {
+      _showErrorSnackBar('الرجاء كتابة محتوى الجزء المطلوب إضافته!');
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      await _firebaseService.submitNextSequentialPartForReview(
+        storyId: _selectedStoryForPart!.id,
+        partTitle: title,
+        partContent: content,
+      );
+
+      if (mounted) {
+        _showSuccessDialog('تم إرسال الجزء الجديد للقصة بنجاح وهو بانتظار موافقة الإدارة!');
+      }
+    } catch (e) {
+      _showErrorSnackBar('حدث خطأ أثناء إرسال الجزء: $e');
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: GoogleFonts.cairo()),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
+  }
+
+  void _showSuccessDialog(String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.bgCard,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppTheme.cyanNeon, width: 1.2),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.greenAccent),
+            const SizedBox(width: 8),
+            Text(
+              'تم الإرسال بنجاح',
+              style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: Text(
+          '$message\n\nستظهر المساهمة في التطبيق فور مراجعتها وقبولها من الإدارة.',
+          style: GoogleFonts.cairo(color: AppTheme.textSecondary, fontSize: 13, height: 1.6),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context); // Return to home screen
+            },
+            child: Text(
+              'حسناً',
+              style: GoogleFonts.cairo(color: AppTheme.cyanNeon, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuthPromptCard() {
+    return GlassCard(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.account_circle, color: AppTheme.cyanNeon, size: 28),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  _currentUser != null
+                      ? 'مرحباً بك: ${_currentUser?.email ?? _currentUser?.displayName ?? "مستخدم مسجل"}'
+                      : 'يلزم تسجيل الدخول عبر حسابك لنشر وتأليف القصص!',
+                  style: GoogleFonts.cairo(
+                    color: AppTheme.textPrimary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (_currentUser == null) ...[
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.cyanNeon,
+                foregroundColor: AppTheme.bgDark,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.login),
+              label: Text('تسجيل الدخول للنشر', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+              onPressed: _signInUser,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final storyProvider = Provider.of<StoryProvider>(context);
+    final availableStories = storyProvider.allStories;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'أرسل مساهمتك للمراجعة',
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: AppTheme.cyanNeon),
+        ),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppTheme.cyanNeon,
+          labelColor: AppTheme.cyanNeon,
+          unselectedLabelColor: AppTheme.textMuted,
+          labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 13),
+          tabs: const [
+            Tab(text: 'قصة جديدة 📖'),
+            Tab(text: 'إضافة جزء لقصة قائمة ✍️'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // MODE A: NEW STORY FORM
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildAuthPromptCard(),
+                GlassCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextField(
+                        controller: _titleController,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'عنوان القصة الجديدة *',
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      TextField(
+                        controller: _authorController,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'اسم الكاتب / المستعار *',
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      DropdownButtonFormField<String>(
+                        initialValue: _selectedGenre,
+                        dropdownColor: AppTheme.bgCard,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'التصنيف الرئيسي',
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                        items: _genres.map((g) => DropdownMenuItem(
+                          value: g,
+                          child: Text(g, style: GoogleFonts.cairo(color: Colors.white)),
+                        )).toList(),
+                        onChanged: (val) {
+                          if (val != null) setState(() => _selectedGenre = val);
+                        },
+                      ),
+                      const SizedBox(height: 12),
+
+                      TextField(
+                        controller: _coverController,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'رابط صورة الغلاف (URL)',
+                          hintText: 'https://...',
+                          hintStyle: GoogleFonts.cairo(color: AppTheme.textMuted, fontSize: 12),
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      Text('أغلفة جاهزة اختر منها:', style: GoogleFonts.cairo(color: AppTheme.cyanNeon, fontSize: 11, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          ActionChip(
+                            label: Text('Cyberpunk', style: GoogleFonts.cairo(color: AppTheme.cyanNeon, fontSize: 10)),
+                            backgroundColor: AppTheme.bgCard,
+                            onPressed: () => _setPresetCover('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=800&q=80'),
+                          ),
+                          ActionChip(
+                            label: Text('Time Travel', style: GoogleFonts.cairo(color: AppTheme.cyanNeon, fontSize: 10)),
+                            backgroundColor: AppTheme.bgCard,
+                            onPressed: () => _setPresetCover('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80'),
+                          ),
+                          ActionChip(
+                            label: Text('Space Opera', style: GoogleFonts.cairo(color: AppTheme.cyanNeon, fontSize: 10)),
+                            backgroundColor: AppTheme.bgCard,
+                            onPressed: () => _setPresetCover('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      TextField(
+                        controller: _descController,
+                        maxLines: 3,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'ملخص القصة (Synopsis) *',
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: [
+                          Text('تنسيق نص الجزء الأول والألوان:', style: GoogleFonts.cairo(color: AppTheme.textMuted, fontSize: 12)),
+                          _buildFormattingToolbar(_firstPartContentController),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+
+                      TextField(
+                        controller: _firstPartContentController,
+                        maxLines: 5,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'محتوى الجزء الأول (اختياري)',
+                          hintText: '# عنوان الجزء...\n\nاكتب نص الجزء الأول هنا...',
+                          hintStyle: GoogleFonts.cairo(color: AppTheme.textMuted, fontSize: 12),
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      _isSubmitting
+                          ? const Center(child: CircularProgressIndicator(color: AppTheme.cyanNeon))
+                          : SciFiButton(
+                        text: 'إرسال القصة الجديدة للمراجعة',
+                        icon: Icons.send_rounded,
+                        onPressed: _handleSubmitNewStory,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
+            ),
+          ),
+
+          // MODE B: ADD PART TO EXISTING STORY
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildAuthPromptCard(),
+                GlassCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'اختر القصة المراد إضافة جزء جديد لها:',
+                        style: GoogleFonts.cairo(color: AppTheme.cyanNeon, fontSize: 13, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+
+                      DropdownButtonFormField<StoryModel>(
+                        initialValue: _selectedStoryForPart,
+                        isExpanded: true,
+                        dropdownColor: AppTheme.bgCard,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'اختر من القصص المتاحة *',
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                        items: availableStories.map((story) => DropdownMenuItem(
+                          value: story,
+                          child: Text(
+                            '${story.title} (الكاتب: ${story.author})',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: GoogleFonts.cairo(color: Colors.white, fontSize: 12),
+                          ),
+                        )).toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            _selectedStoryForPart = val;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      if (_selectedStoryForPart != null) ...[
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.purpleNeon.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppTheme.purpleNeon.withValues(alpha: 0.3)),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.info_outline, color: AppTheme.cyanNeon, size: 18),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'سيتم تحديد رقم الجزء تلقائياً بناءً على عدد الأجزاء السابقة!',
+                                  style: GoogleFonts.cairo(color: AppTheme.textSecondary, fontSize: 11),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      TextField(
+                        controller: _partTitleController,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'عنوان الجزء الجديد (اختياري)',
+                          hintText: 'مثال: الفصل الثاني: رحلة العودة',
+                          hintStyle: GoogleFonts.cairo(color: AppTheme.textMuted, fontSize: 12),
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: [
+                          Text('تنسيق نص الجزء والألوان:', style: GoogleFonts.cairo(color: AppTheme.textMuted, fontSize: 12)),
+                          _buildFormattingToolbar(_partContentController),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+
+                      TextField(
+                        controller: _partContentController,
+                        maxLines: 8,
+                        style: GoogleFonts.cairo(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'نص ومحتوى الجزء الجديد *',
+                          hintText: '# عنوان الجزء...\n\n<color name="cyan">نص بلون أزرق سايبر...</color>',
+                          hintStyle: GoogleFonts.cairo(color: AppTheme.textMuted, fontSize: 12),
+                          labelStyle: GoogleFonts.cairo(color: AppTheme.textMuted),
+                          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.bgCardHover)),
+                          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppTheme.cyanNeon)),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      _isSubmitting
+                          ? const Center(child: CircularProgressIndicator(color: AppTheme.cyanNeon))
+                          : SciFiButton(
+                        text: 'إرسال الجزء الجديد للمراجعة',
+                        icon: Icons.add_circle_outline_rounded,
+                        onPressed: _handleSubmitPartToStory,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
